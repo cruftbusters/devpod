@@ -1,6 +1,6 @@
 export default function App() {
   return (
-    <div style={{ backgroundColor: '#111', color: '#EEE', height: '100%' }}>
+    <div style={{ color: '#EEE', height: '100%' }}>
       <div
         style={{
           fontSize: '2rem',
@@ -47,7 +47,13 @@ export default function App() {
         We are excited to hear from you! Send us an e-mail using the button
         below.
       </Block>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          paddingBottom: '4rem',
+        }}
+      >
         <Link href="mailto:tyler@cruftbusters.com">email us</Link>
         <Link href="https://github.com/cruftbusters">github</Link>
       </div>
@@ -59,9 +65,10 @@ function Block({ children }) {
   return (
     <div
       style={{
+        maxWidth: '6in',
         margin: '0 auto',
-        width: '50%',
         marginBottom: '1rem',
+        padding: '0 1rem',
         textIndent: '1rem',
       }}
     >
