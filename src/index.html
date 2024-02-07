@@ -12,45 +12,65 @@
         }
 
         .container {
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-text {
             display: flex;
             flex-direction: column;
             justify-content: center;
             text-align: center;
-            height: 50%;
             box-sizing: border-box;
-            padding: 8px;
+
+            padding: 0.25rem;
         }
 
         @media screen and (orientation: landscape) {
-            .container {
-                padding: 8px 20vw;
+            .container-text {
+                padding: 0.25rem 20vw;
             }
         }
 
-        .container>div {
-            margin: 1rem 0;
+        .container-text>div {
+            margin: 0.5rem 0.5rem;
+        }
+
+        .container-splash {
+            height: 100%;
+
+            background-image: url("alexander-grey-BucjGtyv58A-unsplash-151kb.jpg");
+            background-size: cover;
+
+            filter: grayscale(100%);
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div>
-            Cruftbusters LLC is a software development consultancy operating in
-            Kirkland, Washington.
+        <div class="container-splash"></div>
+        <div class="container-text">
+            <div>
+                Cruftbusters LLC is a software development consultancy operating in
+                Kirkland, Washington.
+            </div>
+            <div>
+                Our specialties include continuous integration and deployment, Java software development, test-driven
+                development and design, coaching and mentoring. Our experience is in IoT, retail and pharmaceutical
+                industries.
+            </div>
+            <div>
+                Tyler Johnson, Principal
+                <br />
+                <a href="mailto:tyler@cruftbusters.com">tyler@cruftbusters.com</a>
+                <br />
+                <a href="tel:+16123562513">(612) 356-2513</a>
+            </div>
         </div>
-        <div>
-            Our specialties include continuous integration and deployment, Java software development, test-driven
-            development and design, coaching and mentoring. Our experience is in IoT, retail and pharmaceutical
-            industries.
-        </div>
-        <div>
-            Tyler Johnson, Principal
-            <br />
-            <a href="mailto:tyler@cruftbusters.com">tyler@cruftbusters.com</a>
-            <br />
-            <a href="tel:+16123562513">(612) 356-2513</a>
-        </div>
+        <div class="container-splash"></div>
     </div>
 </body>
 
