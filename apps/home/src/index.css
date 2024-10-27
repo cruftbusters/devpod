@@ -13,41 +13,26 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.accent {
-  background-color: #484848;
-}
-
-.brand {
-  background-color: #909090;
-  color: white;
-}
-
 a {
   font-weight: 500;
-  color: #ffa;
+  color: #646cff;
   text-decoration: inherit;
 }
 a:hover {
-  color: white;
+  color: #535bf2;
 }
 
 body {
   margin: 0;
+  display: flex;
+  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 0;
-}
-
-p {
-  margin: 0.5em 0;
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
 button {
@@ -72,26 +57,11 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #fff;
+    background-color: #ffffff;
   }
-
-  .accent {
-    background-color: #eee;
-  }
-
-  .brand {
-    color: #213547;
-    background-color: #ddd;
-  }
-
-  a {
-    color: #664;
-  }
-
   a:hover {
-    color: #213547;
+    color: #747bff;
   }
-
   button {
     background-color: #f9f9f9;
   }
