@@ -28,6 +28,7 @@ function App() {
         <h2>Meet the Team</h2>
         <h3>Tyler Johnson</h3>
         <h4>Principal</h4>
+        <div>Bothell, Washington, USA</div>
         <div>
           <a href="mailto:tyler@cruftbusters.com">tyler@cruftbusters.com</a>
         </div>
