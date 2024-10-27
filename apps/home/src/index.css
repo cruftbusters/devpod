@@ -13,18 +13,22 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.accent {
+  background-color: #484848;
+}
+
 .brand {
-  background-color: dimgray;
+  background-color: #909090;
   color: white;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #ffa;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: white;
 }
 
 body {
@@ -68,17 +72,26 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #fff;
+  }
+
+  .accent {
+    background-color: #eee;
   }
 
   .brand {
-    background-color: lightgray;
-    color: black;
+    color: #213547;
+    background-color: #ddd;
+  }
+
+  a {
+    color: #664;
   }
 
   a:hover {
-    color: #747bff;
+    color: #213547;
   }
+
   button {
     background-color: #f9f9f9;
   }

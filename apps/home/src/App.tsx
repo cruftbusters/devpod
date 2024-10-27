@@ -1,8 +1,19 @@
 function App() {
   return (
     <>
-      <div className={'brand'} style={{ padding: '1em' }}>
-        <h1>Cruftbusters LLC</h1>
+      <div className={'brand'} style={{ padding: '0.5em 1em' }}>
+        <a href="/" style={{ color: 'inherit' }}>
+          <h1>Cruftbusters LLC</h1>
+        </a>
+      </div>
+      <div className={'accent'} style={{ padding: '0.25em 1em' }}>
+        <a href="https://github.com/cruftbusters">github</a>
+        <a
+          hidden={true}
+          href="https://ccfs.sos.wa.gov/#/expressAnnualReport/1593817"
+        >
+          WA UBI 604 960 276
+        </a>
       </div>
       <div style={{ margin: '1em' }}>
         <p>
@@ -23,18 +34,6 @@ function App() {
         <div>
           <a href="tel:+16123562513">(612) 356-2513</a>
         </div>
-      </div>
-      <div style={{ margin: '1em' }}>
-        <h2>Useful Links</h2>
-        <div>
-          <a href="https://github.com/cruftbusters">github</a>
-        </div>
-        <a
-          hidden={true}
-          href="https://ccfs.sos.wa.gov/#/expressAnnualReport/1593817"
-        >
-          WA UBI 604 960 276
-        </a>
       </div>
     </>
   )
