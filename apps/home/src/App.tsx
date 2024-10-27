@@ -1,7 +1,7 @@
 function App() {
   return (
     <>
-      <div style={{ padding: '1em', backgroundColor: '#AAF', color: '#448' }}>
+      <div className={'brand'} style={{ padding: '1em' }}>
         <h1>Cruftbusters LLC</h1>
       </div>
       <div style={{ margin: '1em' }}>

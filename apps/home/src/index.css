@@ -13,6 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.brand {
+  background-color: dimgray;
+  color: white;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -65,6 +70,12 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
+  .brand {
+    background-color: lightgray;
+    color: black;
+  }
+
   a:hover {
     color: #747bff;
   }
