@@ -11,7 +11,7 @@ export function Contact() {
         <div>Tyler Johnson</div>
         <div>Principal</div>
         <div>Bothell, Washington, USA</div>
-        <div>Looking to jam</div>
+        <div>Lets jam</div>
         <div>
           <a href="mailto:tyler@cruftbusters.com">tyler@cruftbusters.com</a>
         </div>
