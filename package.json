@@ -1,4 +1,8 @@
 {
   "name": "cruftbusters.com",
-  "packageManager": "pnpm@9.12.2"
+  "packageManager": "pnpm@9.12.2",
+  "scripts": {
+    "devcontainer:build": "docker build -f .devcontainer/dockerfile -t devcontainer .",
+    "devcontainer:run": "docker run -it --rm -p 5173:5173 -p 5174:5174 -v /tmp/ssh-XXXXXXx7f5g6/agent.215046:/tmp/ssh-XXXXXXx7f5g6/agent.215046 -e SSH_AUTH_SOCK=/tmp/ssh-XXXXXXx7f5g6/agent.215046 devcontainer"
+  }
 }
