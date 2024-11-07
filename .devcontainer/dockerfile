@@ -5,6 +5,8 @@ RUN apt-get upgrade -y
 RUN apt-get install -y build-essential curl git npm zsh
 RUN apt-get clean
 
+RUN npm install --global corepack
+
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN usermod -s /bin/zsh root
 
