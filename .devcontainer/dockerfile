@@ -1,14 +1,15 @@
-FROM ubuntu:latest
+FROM mcr.microsoft.com/playwright:v1.46.0-noble
 
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install -y build-essential curl git npm zsh
+RUN apt-get install -y build-essential screen zsh
 RUN apt-get clean
 
 RUN npm install --global corepack
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN usermod -s /bin/zsh root
+RUN sed -i 's/robbyrussell/aussiegeek/' /root/.zshrc
 
 RUN curl -sLO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
 RUN tar -C /opt -xzf nvim-linux64.tar.gz
@@ -16,16 +17,5 @@ RUN rm nvim-linux64.tar.gz
 RUN ln -s /opt/nvim-linux64/bin/nvim /usr/local/bin
 RUN echo EDITOR=nvim >> /root/.zshrc
 
-RUN mkdir /root/.config
-RUN ln -s /root/workspace/.config/nvim /root/.config/nvim
-
-RUN git config --global core.editor nvim
-RUN git config --global init.defaultBranch main
-RUN git config --global pull.rebase true
-RUN git config --global push.autoSetupRemote true
-RUN echo 'gpom() { git pull origin main }' >> /root/.zshrc
-
-WORKDIR /root/workspace
-RUN git init
-RUN git remote add origin git@github.com:cruftbusters/cruftbusters.com.git
-CMD /bin/zsh
+COPY .devcontainer/entrypoint.zsh /root/entrypoint.zsh
+CMD /root/entrypoint.zsh
