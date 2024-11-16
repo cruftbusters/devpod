@@ -4,14 +4,16 @@ export function Contact() {
   return (
     <MarginAround>
       <p>
-        hey there, say hi to my team of one. we could yap or get to the point
-        about anything you could imagine. let me know what's on your mind
+        this page serves as an intro, contact card, and flywheel for software
+      </p>
+      <p>
+        say hi to my team of one. we could yap or get to the point about
+        anything you could imagine. let's jam or let me know what's on your mind
       </p>
       <div>
         <div>Tyler Johnson</div>
         <div>Principal</div>
         <div>Bothell, Washington, USA</div>
-        <div>Lets jam</div>
         <div>
           <a href="mailto:tyler@cruftbusters.com">tyler@cruftbusters.com</a>
         </div>
