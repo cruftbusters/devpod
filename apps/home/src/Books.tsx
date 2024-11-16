@@ -2,6 +2,7 @@ import { useLedgers } from './database'
 import { MarginAboveBelow, MarginAround } from './MarginAround'
 import { TransferListEditor } from './TransferListEditor'
 import { LedgerListEditor } from './LedgerListEditor'
+import { LedgerSummary } from './LedgerSummary'
 
 export function Bookkeeping() {
   const state = useLedgers()
@@ -19,6 +20,9 @@ export function Bookkeeping() {
           </MarginAboveBelow>
           <MarginAboveBelow>
             <TransferListEditor {...state} />
+          </MarginAboveBelow>
+          <MarginAboveBelow>
+            <LedgerSummary {...state} />
           </MarginAboveBelow>
         </>
       )}
