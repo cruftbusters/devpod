@@ -32,6 +32,11 @@ export function Books() {
           gridTemplateColumns: 'repeat(4, auto)',
         }}
       >
+        <GridRow>
+          <div>Debit Account</div>
+          <div>Credit Account</div>
+          <div>Amount</div>
+        </GridRow>
         {transfers
           ? transfers.map((transfer) => (
               <GridRow key={transfer.key}>
