@@ -82,7 +82,7 @@ export function Books() {
             ))
           : 'Loading transfers'}
       </Grid>
-      <div>
+      <div style={{ margin: '1em 0' }}>
         <button
           onClick={() => {
             database.transfers.add({
