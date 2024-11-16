@@ -1,4 +1,4 @@
-import { Books } from './Books'
+import { Bookkeeping } from './Books'
 import { Contact } from './Contact'
 import { Header } from './Header'
 
@@ -7,7 +7,7 @@ function App() {
     <>
       <Header />
       <Contact />
-      <Books />
+      <Bookkeeping />
     </>
   )
 }
