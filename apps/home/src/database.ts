@@ -14,7 +14,7 @@ export type Transfer = {
   timestamp: string
   debitAccount: string
   creditAccount: string
-  amount: Number
+  amount: number
 }
 
 import Dexie, { EntityTable } from 'dexie'
@@ -29,7 +29,7 @@ export const database = new Dexie('cruftbusters.com') as Dexie & {
 database.version(1).stores({
   ledgers: 'key',
   selections: 'key',
-  transfers: 'key, ledger, [timestamp+key]',
+  transfers: 'key, ledger',
 })
 
 export function useLedgers() {
@@ -48,7 +48,7 @@ export function useLedgers() {
 
     const transfers = await database.transfers
       .where({ ledger: key })
-      .sortBy('[timestamp+key]')
+      .sortBy('timestamp')
 
     return { ledgers, ledger: { ...ledger, transfers } }
   })
