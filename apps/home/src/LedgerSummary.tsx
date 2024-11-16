@@ -7,7 +7,7 @@ export function LedgerSummary({
 }) {
   return (
     <>
-      <h3>Summary</h3>
+      <h3>Ledger Summary</h3>
       <div>there are {ledger?.transfers.length || 'no'} transfers</div>
     </>
   )

@@ -2,7 +2,7 @@ import { database, Ledger, Transfer } from './database'
 import { v4 as uuidv4 } from 'uuid'
 import { Grid, GridRow } from './Grid'
 
-export function TransferListEditor({
+export function TransferEditor({
   ledger,
 }: {
   ledger?: Ledger & { transfers: Transfer[] }
@@ -10,6 +10,7 @@ export function TransferListEditor({
   return (
     ledger === undefined || (
       <>
+        <h3>Transfer Editor</h3>
         {ledger?.transfers === undefined || ledger?.transfers?.length < 1 || (
           <div>
             <TransferListEditorGrid ledger={ledger} />

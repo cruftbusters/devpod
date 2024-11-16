@@ -1,8 +1,8 @@
 import { useLedgers } from './database'
 import { MarginAboveBelow, MarginAround } from './MarginAround'
-import { TransferListEditor } from './TransferListEditor'
-import { LedgerListEditor } from './LedgerListEditor'
 import { LedgerSummary } from './LedgerSummary'
+import { TransferEditor } from './TransferEditor'
+import { LedgerEditor } from './LedgerEditor'
 
 export function Bookkeeping() {
   const state = useLedgers()
@@ -16,10 +16,10 @@ export function Bookkeeping() {
         <>
           <div hidden={state.ledger !== undefined}>No ledger selected</div>
           <MarginAboveBelow>
-            <LedgerListEditor {...state} />
+            <LedgerEditor {...state} />
           </MarginAboveBelow>
           <MarginAboveBelow>
-            <TransferListEditor {...state} />
+            <TransferEditor {...state} />
           </MarginAboveBelow>
           <MarginAboveBelow>
             <LedgerSummary {...state} />
