@@ -8,7 +8,7 @@ export function Grid({
     <div
       style={{
         display: 'inline-grid',
-        gridGap: '0.125em 0.25em',
+        gridGap: '0.125em',
         padding: '0.125em 0.25em',
         ...style,
       }}
