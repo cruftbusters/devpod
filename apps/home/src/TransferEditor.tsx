@@ -22,7 +22,7 @@ export function TransferEditor({
               database.transfers.add({
                 key: uuidv4(),
                 ledger: ledger.key,
-                timestamp: new Date().toISOString(),
+                date: new Date().toISOString(),
                 debitAccount: '',
                 creditAccount: '',
                 amount: 0,
@@ -46,16 +46,27 @@ function TransferListEditorGrid({
   return (
     <Grid
       style={{
-        gridTemplateColumns: 'repeat(4, auto)',
+        gridTemplateColumns: 'repeat(5, auto)',
       }}
     >
       <GridRow>
+        <div>Date</div>
         <div>Debit Account</div>
         <div>Credit Account</div>
         <div>Amount</div>
       </GridRow>
       {ledger.transfers.map((transfer) => (
         <GridRow key={transfer.key}>
+          <input
+            onChange={(e) =>
+              database.transfers.put({
+                ...transfer,
+                date: e.target.value,
+              })
+            }
+            placeholder="date"
+            value={transfer.date}
+          />
           <input
             onChange={(e) =>
               database.transfers.put({

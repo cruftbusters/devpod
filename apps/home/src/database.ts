@@ -11,7 +11,7 @@ export type Selection = {
 export type Transfer = {
   key: string
   ledger: string
-  timestamp: string
+  date: string
   debitAccount: string
   creditAccount: string
   amount: number
@@ -48,7 +48,7 @@ export function useLedgers() {
 
     const transfers = await database.transfers
       .where({ ledger: key })
-      .sortBy('timestamp')
+      .sortBy('date')
 
     return { ledgers, ledger: { ...ledger, transfers } }
   })
