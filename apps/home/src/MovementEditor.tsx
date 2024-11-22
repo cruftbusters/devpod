@@ -70,7 +70,7 @@ function EditorGrid({ ledger }: { ledger: Ledger }) {
                       <TransferEditor
                         movement={movement}
                         transfer={transfer}
-                        index={index}
+                        index={index + 1}
                       />
                     </GridRow>
                   ))}
