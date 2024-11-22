@@ -1,7 +1,9 @@
 import {
   Ledger,
   LedgerOperations,
+  Movement,
   MovementOperations,
+  Transfer,
   TransferOperations,
 } from './database'
 import { v4 as uuidv4 } from 'uuid'
@@ -55,64 +57,23 @@ function EditorGrid({ ledger }: { ledger: Ledger }) {
                       placeholder="date"
                       value={movement.date}
                     />
+                    <TransferEditor
+                      movement={movement}
+                      transfer={movement.transfers[0]}
+                      index={0}
+                    />
                   </GridRow>
-                  {movement.transfers.map((transfer, index) => {
-                    const dispatch = TransferOperations(movement, index)
-                    return (
-                      <GridRow key={index}>
-                        <div />
-                        <div />
-                        <input
-                          onChange={(e) =>
-                            dispatch.put({
-                              ...transfer,
-                              debitAccount: e.target.value,
-                            })
-                          }
-                          placeholder="debit account"
-                          value={transfer.debitAccount}
-                        />
-                        <input
-                          onChange={(e) =>
-                            dispatch.put({
-                              ...transfer,
-                              creditAccount: e.target.value,
-                            })
-                          }
-                          placeholder="credit account"
-                          value={transfer.creditAccount}
-                        />
-                        <input
-                          onChange={(e) =>
-                            dispatch.put({
-                              ...transfer,
-                              amount: parseInt(e.target.value),
-                            })
-                          }
-                          placeholder="amount"
-                          value={
-                            transfer.amount === 0
-                              ? ''
-                              : transfer.amount.toString()
-                          }
-                        />
-                        <button
-                          onClick={() =>
-                            dispatch.insert({
-                              debitAccount: '',
-                              creditAccount: '',
-                              amount: 0,
-                            })
-                          }
-                        >
-                          +
-                        </button>
-                        <button onClick={() => dispatch.remove()}>
-                          &times;
-                        </button>
-                      </GridRow>
-                    )
-                  })}
+                  {movement.transfers.slice(1).map((transfer, index) => (
+                    <GridRow key={index}>
+                      <div />
+                      <div />
+                      <TransferEditor
+                        movement={movement}
+                        transfer={transfer}
+                        index={index}
+                      />
+                    </GridRow>
+                  ))}
                 </Fragment>
               )
             })}
@@ -141,5 +102,63 @@ function EditorGrid({ ledger }: { ledger: Ledger }) {
         </GridRow>
       </Grid>
     )
+  )
+}
+
+function TransferEditor({
+  movement,
+  transfer,
+  index,
+}: {
+  movement: Movement
+  transfer: Transfer
+  index: number
+}) {
+  const dispatch = TransferOperations(movement, index)
+  return (
+    <>
+      <input
+        onChange={(e) =>
+          dispatch.put({
+            ...transfer,
+            debitAccount: e.target.value,
+          })
+        }
+        placeholder="debit account"
+        value={transfer.debitAccount}
+      />
+      <input
+        onChange={(e) =>
+          dispatch.put({
+            ...transfer,
+            creditAccount: e.target.value,
+          })
+        }
+        placeholder="credit account"
+        value={transfer.creditAccount}
+      />
+      <input
+        onChange={(e) =>
+          dispatch.put({
+            ...transfer,
+            amount: parseInt(e.target.value),
+          })
+        }
+        placeholder="amount"
+        value={transfer.amount === 0 ? '' : transfer.amount.toString()}
+      />
+      <button
+        onClick={() =>
+          dispatch.insert({
+            debitAccount: '',
+            creditAccount: '',
+            amount: 0,
+          })
+        }
+      >
+        +
+      </button>
+      <button onClick={() => dispatch.remove()}>&times;</button>
+    </>
   )
 }

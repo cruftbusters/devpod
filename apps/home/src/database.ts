@@ -19,7 +19,7 @@ export type Movement = {
   transfers: Transfer[]
 }
 
-type Transfer = {
+export type Transfer = {
   debitAccount: string
   creditAccount: string
   amount: number
