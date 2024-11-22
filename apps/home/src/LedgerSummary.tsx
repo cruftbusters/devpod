@@ -1,10 +1,6 @@
-import { Transfer } from './database'
+import { Ledger } from './database'
 
-export function LedgerSummary({
-  ledger,
-}: {
-  ledger?: { transfers: Transfer[] }
-}) {
+export function LedgerSummary({ ledger }: { ledger?: Ledger }) {
   const balance = { amount: 0 }
   for (const transfer of ledger?.transfers || []) {
     accrue(balance, transfer.debitAccount.split(':'), transfer.amount)

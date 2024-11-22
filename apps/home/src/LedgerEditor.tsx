@@ -1,4 +1,4 @@
-import { database, Ledger, Transfer } from './database'
+import { database, Ledger } from './database'
 import { v4 as uuidv4 } from 'uuid'
 import { Grid, GridRow } from './Grid'
 import { Schema } from './Schema'
@@ -7,7 +7,7 @@ export function LedgerEditor({
   ledger,
   ledgers,
 }: {
-  ledger?: Ledger & { transfers: Transfer[] }
+  ledger?: Ledger
   ledgers?: Ledger[]
 }) {
   return (

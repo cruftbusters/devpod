@@ -3,11 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Grid, GridRow } from './Grid'
 import { MarginAboveBelow } from './MarginAround'
 
-export function TransferEditor({
-  ledger,
-}: {
-  ledger?: Ledger & { transfers: Transfer[] }
-}) {
+export function TransferEditor({ ledger }: { ledger?: Ledger }) {
   return (
     ledger === undefined || (
       <>
@@ -37,11 +33,7 @@ export function TransferEditor({
   )
 }
 
-function TransferListEditorGrid({
-  ledger,
-}: {
-  ledger: Ledger & { transfers: Transfer[] }
-}) {
+function TransferListEditorGrid({ ledger }: { ledger: Ledger }) {
   return (
     ledger.transfers === undefined ||
     ledger.transfers?.length < 1 || (

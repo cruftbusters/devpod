@@ -1,4 +1,8 @@
-export type Ledger = {
+export type Ledger = LedgerData & {
+  transfers: Transfer[]
+}
+
+export type LedgerData = {
   key: string
   name: string
 }
@@ -21,7 +25,7 @@ import Dexie, { EntityTable } from 'dexie'
 import { useLiveQuery } from 'dexie-react-hooks'
 
 export const database = new Dexie('cruftbusters.com') as Dexie & {
-  ledgers: EntityTable<Ledger, 'key'>
+  ledgers: EntityTable<LedgerData, 'key'>
   selections: EntityTable<Selection, 'key'>
   transfers: EntityTable<Transfer, 'key'>
 }
