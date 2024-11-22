@@ -1,3 +1,4 @@
+import { Route, Routes } from 'react-router-dom'
 import { Bookkeeping } from './Books'
 import { Contact } from './Contact'
 import { Header } from './Header'
@@ -6,8 +7,10 @@ function App() {
   return (
     <>
       <Header />
-      <Contact />
-      <Bookkeeping />
+      <Routes>
+        <Route path={'/bookkeeping'} element={<Bookkeeping />} />
+        <Route index element={<Contact />} />
+      </Routes>
     </>
   )
 }

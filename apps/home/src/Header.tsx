@@ -6,7 +6,10 @@ export function Header() {
     <MarginAround>
       <header>
         <Link to="/" style={{ color: 'inherit' }}>
-          <h1>Cruftbusters LLC</h1>
+          <h1 style={{ margin: '0.125em 0' }}>Cruftbusters LLC</h1>
+        </Link>
+        <Link to="/bookkeeping">
+          <span>bookkeeping</span>
         </Link>
         <a
           hidden={true}
