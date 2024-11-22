@@ -1,7 +1,13 @@
-import { database, Ledger } from './database'
+import {
+  Ledger,
+  LedgerOperations,
+  MovementOperations,
+  TransferOperations,
+} from './database'
 import { v4 as uuidv4 } from 'uuid'
 import { Grid, GridRow } from './Grid'
 import { MarginAboveBelow } from './MarginAround'
+import { Fragment } from 'react/jsx-runtime'
 
 export function TransferEditor({ ledger }: { ledger?: Ledger }) {
   return (
@@ -11,23 +17,7 @@ export function TransferEditor({ ledger }: { ledger?: Ledger }) {
         <MarginAboveBelow>
           <TransferListEditorGrid ledger={ledger} />
         </MarginAboveBelow>
-        <MarginAboveBelow>
-          <button
-            onClick={() => {
-              database.transfers.add({
-                key: uuidv4(),
-                ledger: ledger.key,
-                date: new Date().toISOString(),
-                debitAccount: '',
-                creditAccount: '',
-                amount: 0,
-              })
-            }}
-            style={{ padding: '0.25em 0.5em' }}
-          >
-            Create new transfer
-          </button>
-        </MarginAboveBelow>
+        <MarginAboveBelow></MarginAboveBelow>
       </>
     )
   )
@@ -35,66 +25,121 @@ export function TransferEditor({ ledger }: { ledger?: Ledger }) {
 
 function TransferListEditorGrid({ ledger }: { ledger: Ledger }) {
   return (
-    ledger.movements === undefined ||
-    ledger.movements?.length < 1 || (
+    ledger.movements === undefined || (
       <Grid
         style={{
-          gridTemplateColumns: 'repeat(5, auto)',
+          gridTemplateColumns: 'repeat(7, auto)',
         }}
       >
+        {ledger.movements?.length < 1 || (
+          <>
+            <GridRow>
+              <div />
+              <div>Date</div>
+              <div>Debit Account</div>
+              <div>Credit Account</div>
+              <div>Amount</div>
+            </GridRow>
+            {ledger.movements.map((movement) => {
+              const dispatch = MovementOperations(movement)
+              return (
+                <Fragment key={movement.key}>
+                  <GridRow>
+                    <button onClick={() => dispatch.remove()}>&times;</button>
+                    <input
+                      onChange={(e) =>
+                        dispatch.put({
+                          ...movement,
+                          date: e.target.value,
+                        })
+                      }
+                      placeholder="date"
+                      value={movement.date}
+                    />
+                  </GridRow>
+                  {movement.transfers.map((transfer, index) => {
+                    const dispatch = TransferOperations(movement, index)
+                    return (
+                      <GridRow key={index}>
+                        <div />
+                        <div />
+                        <input
+                          onChange={(e) =>
+                            dispatch.put({
+                              ...transfer,
+                              debitAccount: e.target.value,
+                            })
+                          }
+                          placeholder="debit account"
+                          value={transfer.debitAccount}
+                        />
+                        <input
+                          onChange={(e) =>
+                            dispatch.put({
+                              ...transfer,
+                              creditAccount: e.target.value,
+                            })
+                          }
+                          placeholder="credit account"
+                          value={transfer.creditAccount}
+                        />
+                        <input
+                          onChange={(e) =>
+                            dispatch.put({
+                              ...transfer,
+                              amount: parseInt(e.target.value),
+                            })
+                          }
+                          placeholder="amount"
+                          value={
+                            transfer.amount === 0
+                              ? ''
+                              : transfer.amount.toString()
+                          }
+                        />
+                        <button
+                          onClick={() =>
+                            dispatch.insert({
+                              debitAccount: '',
+                              creditAccount: '',
+                              amount: 0,
+                            })
+                          }
+                        >
+                          +
+                        </button>
+                        <button onClick={() => dispatch.remove()}>
+                          &times;
+                        </button>
+                      </GridRow>
+                    )
+                  })}
+                </Fragment>
+              )
+            })}
+          </>
+        )}
         <GridRow>
-          <div>Date</div>
-          <div>Debit Account</div>
-          <div>Credit Account</div>
-          <div>Amount</div>
+          <button
+            onClick={() => {
+              LedgerOperations().insert({
+                key: uuidv4(),
+                ledger: ledger.key,
+                date: new Date().toISOString(),
+                transfers: [
+                  {
+                    debitAccount: '',
+                    creditAccount: '',
+                    amount: 0,
+                  },
+                ],
+              })
+            }}
+            style={{ padding: '0.25em 0.5em' }}
+          >
+            {ledger.movements.length > 0 ? '+' : 'Create new movement'}
+          </button>
         </GridRow>
-        {ledger.movements.map((transfer) => (
-          <GridRow key={transfer.key}>
-            <input
-              onChange={(e) =>
-                database.transfers.put({
-                  ...transfer,
-                  date: e.target.value,
-                })
-              }
-              placeholder="date"
-              value={transfer.date}
-            />
-            <input
-              onChange={(e) =>
-                database.transfers.put({
-                  ...transfer,
-                  debitAccount: e.target.value,
-                })
-              }
-              placeholder="debit account"
-              value={transfer.debitAccount}
-            />
-            <input
-              onChange={(e) =>
-                database.transfers.put({
-                  ...transfer,
-                  creditAccount: e.target.value,
-                })
-              }
-              placeholder="credit account"
-              value={transfer.creditAccount}
-            />
-            <input
-              onChange={(e) =>
-                database.transfers.put({
-                  ...transfer,
-                  amount: parseInt(e.target.value),
-                })
-              }
-              placeholder="amount"
-              value={transfer.amount === 0 ? '' : transfer.amount.toString()}
-            />
-            <button onClick={() => database.transfers.delete(transfer.key)}>
-              &times;
-            </button>
-          </GridRow>
-        ))}
       </Grid>
     )
   )

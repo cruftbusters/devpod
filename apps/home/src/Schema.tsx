@@ -7,20 +7,23 @@ export function Schema(
     let content = 'data:text/csv;charset=utf-8,'
     content += headers.join(',') + '\r\n'
     for (const movement of movements) {
-      content +=
-        [
-          movement.key,
-          movement.date,
-          movement.debitAccount,
-          movement.creditAccount,
-          movement.amount,
-        ].join(',') + '\r\n'
+      content += [movement.key, movement.date].join(',') + '\r\n'
+      for (const transfer of movement.transfers) {
+        content +=
+          [
+            '',
+            '',
+            transfer.debitAccount,
+            transfer.creditAccount,
+            transfer.amount,
+          ].join(',') + '\r\n'
+      }
     }
     window.open(encodeURI(content))
   }
 
   async function _import(key: string, files: FileList | null) {
-    const movements = []
+    const movements: Movement[] = []
 
     for (const file of files || []) {
       const text = await file.text()
@@ -37,24 +40,22 @@ export function Schema(
       for (const line of lines) {
         if (line.length > 0) {
           const values = line.split(',')
-          let movement: Movement = {
-            key: '',
-            ledger: key,
-            date: '',
-            debitAccount: '',
-            creditAccount: '',
-            amount: 0,
+          if (values.length > 2) {
+            values.shift()
+            values.shift()
+            movements[movements.length - 1].transfers.push({
+              debitAccount: values.shift() || '',
+              creditAccount: values.shift() || '',
+              amount: parseInt(values.shift() || ''),
+            })
+          } else {
+            movements.push({
+              key: values.shift() || '',
+              ledger: key,
+              date: values.shift() || '',
+              transfers: [],
+            })
           }
-          for (const header of headers) {
-            movement = {
-              ...movement,
-              [header]:
-                header === 'amount'
-                  ? parseInt(values.shift() || '')
-                  : values.shift(),
-            }
-          }
-          movements.push(movement)
         }
       }
     }

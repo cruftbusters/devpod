@@ -81,15 +81,15 @@ export function LedgerEditor({
                   {'import: '}
                   <input
                     onChange={async (e) => {
-                      const transfers = await Schema()._import(
+                      const movements = await Schema()._import(
                         ledger.key,
                         e.target.files,
                       )
 
-                      await database.transfers
+                      await database.movements
                         .where({ ledger: ledger.key })
                         .delete()
-                      await database.transfers.bulkAdd(transfers)
+                      await database.movements.bulkAdd(movements)
                     }}
                     value={undefined}
                     type={'file'}
