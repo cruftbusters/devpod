@@ -1,4 +1,4 @@
-import { database, Ledger, Transfer } from './database'
+import { database, Ledger } from './database'
 import { v4 as uuidv4 } from 'uuid'
 import { Grid, GridRow } from './Grid'
 import { MarginAboveBelow } from './MarginAround'
@@ -35,8 +35,8 @@ export function TransferEditor({ ledger }: { ledger?: Ledger }) {
 
 function TransferListEditorGrid({ ledger }: { ledger: Ledger }) {
   return (
-    ledger.transfers === undefined ||
-    ledger.transfers?.length < 1 || (
+    ledger.movements === undefined ||
+    ledger.movements?.length < 1 || (
       <Grid
         style={{
           gridTemplateColumns: 'repeat(5, auto)',
@@ -48,7 +48,7 @@ function TransferListEditorGrid({ ledger }: { ledger: Ledger }) {
           <div>Credit Account</div>
           <div>Amount</div>
         </GridRow>
-        {ledger.transfers.map((transfer) => (
+        {ledger.movements.map((transfer) => (
           <GridRow key={transfer.key}>
             <input
               onChange={(e) =>

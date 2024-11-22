@@ -1,26 +1,26 @@
-import { Transfer } from './database'
+import { Movement } from './database'
 
 export function Schema(
   headers = ['key', 'date', 'debitAccount', 'creditAccount', 'amount'],
 ) {
-  async function _export(transfers: Transfer[]) {
+  async function _export(movements: Movement[]) {
     let content = 'data:text/csv;charset=utf-8,'
     content += headers.join(',') + '\r\n'
-    for (const transfer of transfers) {
+    for (const movement of movements) {
       content +=
         [
-          transfer.key,
-          transfer.date,
-          transfer.debitAccount,
-          transfer.creditAccount,
-          transfer.amount,
+          movement.key,
+          movement.date,
+          movement.debitAccount,
+          movement.creditAccount,
+          movement.amount,
         ].join(',') + '\r\n'
     }
     window.open(encodeURI(content))
   }
 
   async function _import(key: string, files: FileList | null) {
-    const transfers = []
+    const movements = []
 
     for (const file of files || []) {
       const text = await file.text()
@@ -37,7 +37,7 @@ export function Schema(
       for (const line of lines) {
         if (line.length > 0) {
           const values = line.split(',')
-          let transfer: Transfer = {
+          let movement: Movement = {
             key: '',
             ledger: key,
             date: '',
@@ -46,20 +46,20 @@ export function Schema(
             amount: 0,
           }
           for (const header of headers) {
-            transfer = {
-              ...transfer,
+            movement = {
+              ...movement,
               [header]:
                 header === 'amount'
                   ? parseInt(values.shift() || '')
                   : values.shift(),
             }
           }
-          transfers.push(transfer)
+          movements.push(movement)
         }
       }
     }
 
-    return transfers
+    return movements
   }
 
   return { _import, _export }

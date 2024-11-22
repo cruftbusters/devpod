@@ -2,7 +2,7 @@ import { Ledger } from './database'
 
 export function LedgerSummary({ ledger }: { ledger?: Ledger }) {
   const balance = { amount: 0 }
-  for (const transfer of ledger?.transfers || []) {
+  for (const transfer of ledger?.movements || []) {
     accrue(balance, transfer.debitAccount.split(':'), transfer.amount)
     accrue(balance, transfer.creditAccount.split(':'), -transfer.amount)
   }
@@ -10,7 +10,7 @@ export function LedgerSummary({ ledger }: { ledger?: Ledger }) {
     ledger === undefined || (
       <>
         <h3>Ledger Summary</h3>
-        <div>there are {ledger.transfers.length || 'no'} transfers</div>
+        <div>there are {ledger.movements.length || 'no'} transfers</div>
         <BalanceView name={'total'} balance={balance} />
       </>
     )

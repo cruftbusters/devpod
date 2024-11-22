@@ -1,5 +1,5 @@
 export type Ledger = LedgerData & {
-  transfers: Transfer[]
+  movements: Movement[]
 }
 
 export type LedgerData = {
@@ -12,7 +12,7 @@ export type Selection = {
   value: string
 }
 
-export type Transfer = {
+export type Movement = {
   key: string
   ledger: string
   date: string
@@ -27,7 +27,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 export const database = new Dexie('cruftbusters.com') as Dexie & {
   ledgers: EntityTable<LedgerData, 'key'>
   selections: EntityTable<Selection, 'key'>
-  transfers: EntityTable<Transfer, 'key'>
+  transfers: EntityTable<Movement, 'key'>
 }
 
 database.version(1).stores({
@@ -50,11 +50,10 @@ export function useLedgers() {
       return { ledgers }
     }
 
-    const transfers = await database.transfers
+    const movements = await database.transfers
       .where({ ledger: key })
       .sortBy('date')
 
-    return { ledgers, ledger: { ...ledger, transfers } }
+    return { ledgers, ledger: { ...ledger, movements } }
   })
 }
-

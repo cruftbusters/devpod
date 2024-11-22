@@ -44,7 +44,7 @@ export function LedgerEditor({
             </select>
             {ledger === undefined || (
               <>
-                <button onClick={() => Schema()._export(ledger.transfers)}>
+                <button onClick={() => Schema()._export(ledger.movements)}>
                   export
                 </button>
                 <button
