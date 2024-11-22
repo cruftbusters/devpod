@@ -9,21 +9,20 @@ import { Grid, GridRow } from './Grid'
 import { MarginAboveBelow } from './MarginAround'
 import { Fragment } from 'react/jsx-runtime'
 
-export function TransferEditor({ ledger }: { ledger?: Ledger }) {
+export function MovementEditor({ ledger }: { ledger?: Ledger }) {
   return (
     ledger === undefined || (
       <>
         <h3>Transfer Editor</h3>
         <MarginAboveBelow>
-          <TransferListEditorGrid ledger={ledger} />
+          <EditorGrid ledger={ledger} />
         </MarginAboveBelow>
-        <MarginAboveBelow></MarginAboveBelow>
       </>
     )
   )
 }
 
-function TransferListEditorGrid({ ledger }: { ledger: Ledger }) {
+function EditorGrid({ ledger }: { ledger: Ledger }) {
   return (
     ledger.movements === undefined || (
       <Grid
