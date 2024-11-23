@@ -11,8 +11,6 @@ git config --global push.autoSetupRemote true
 git clone git@github.com:cruftbusters/cruftbusters.com.git $workspace
 cd $workspace
 pnpm -r install
-pnpm -F home exec playwright install
-pnpm -F home exec playwright install-deps
 
 screen -d -m -S home-dev pnpm -F home dev --host
 screen -d -m -S home-e2e pnpm -F home exec playwright test --ui --ui-host 0.0.0.0 --ui-port 5174
