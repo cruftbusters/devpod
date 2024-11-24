@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/playwright:v1.49.0-noble
 
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install -y build-essential less screen zsh
+RUN apt-get install -y build-essential less screen unzip zsh
 RUN apt-get clean
 
 RUN npm install --global corepack
