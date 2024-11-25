@@ -9,7 +9,25 @@ export class TextSheet {
   }
 
   static fromText(text: string) {
-    const rows = text.split('\n').map((line) => line.split(','))
+    const rows = []
+    for (const line of text.split('\n')) {
+      const values = ['']
+
+      let isQuoted = false
+      for (const char of line) {
+        if (char === '"') {
+          isQuoted = !isQuoted
+        } else if (!isQuoted && char === ',') {
+          values.push('')
+        } else {
+          values[values.length - 1] += char
+        }
+      }
+
+      if (values.length > 1 || values[0].length > 0) {
+        rows.push(values)
+      }
+    }
     return new TextSheet(rows.values())
   }
 
@@ -19,7 +37,11 @@ export class TextSheet {
 
   toText() {
     return Array.from(this.iterator)
-      .map((row) => row.join(','))
+      .map((row) =>
+        row
+          .map((value) => (value.indexOf(',') > -1 ? `"${value}"` : value))
+          .join(','),
+      )
       .join('\n')
   }
 }

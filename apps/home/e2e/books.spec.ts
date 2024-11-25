@@ -16,13 +16,13 @@ test('add two movements', async ({ page }) => {
     .fill(
       TextSheet.fromArray(
         ['date', 'memo', 'debitAccount', 'creditAccount', 'amount'],
-        ['2024-01-01', 'memo 1', 'expense', 'liability', '4000'],
-        ['2024-01-02', 'memo 2', 'liability', 'asset', '1000'],
+        ['2024-01-01', 'memo 1', 'expense', 'liability', ' $ 4,000.00 '],
+        ['2024-01-02', 'memo 2', 'liability', 'asset', ' $ 1,000.00 '],
       ).toText(),
     )
 
   await expect(page.getByText('total: 0')).toBeVisible()
-  await expect(page.getByText('expense: 4000')).toBeVisible()
-  await expect(page.getByText('liability: -3000')).toBeVisible()
-  await expect(page.getByText('asset: -1000')).toBeVisible()
+  await expect(page.getByText('expense: 400000 cents')).toBeVisible()
+  await expect(page.getByText('liability: -300000 cents')).toBeVisible()
+  await expect(page.getByText('asset: -100000 cents')).toBeVisible()
 })

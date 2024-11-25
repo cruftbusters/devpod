@@ -2,7 +2,10 @@ import { TextSheet } from './TextSheet'
 import { Balance } from './types'
 
 export class Summary {
-  static errors = { MISSING_HEADERS: 'missing headers' }
+  static errors = {
+    MISSING_HEADERS: 'missing headers',
+    PARTIAL_CENTS: 'partial cents',
+  }
   static fromTextSheet(sheet: TextSheet): Balance {
     const result = sheet.iterator.next()
     if (result.done === true) {
@@ -31,8 +34,21 @@ export class Summary {
     const balance: Balance = { type: 'cents', amount: 0 }
 
     for (const record of sheet.iterator) {
-      const [debitAccount, creditAccount, amountAsString] = map(record)
-      const amount = parseInt(amountAsString)
+      let [debitAccount, creditAccount, amountAsString] = map(record)
+
+      if (!amountAsString.startsWith(' $ ')) {
+        throw Error(
+          `expected amount to be prefixed with ' $ ' got '${amountAsString}'`,
+        )
+      }
+
+      amountAsString = amountAsString.slice(3).replace(',', '').trim()
+      const [dollars, cents] = amountAsString.split('.')
+      if (cents.length > 2) {
+        throw Error(Summary.errors.PARTIAL_CENTS)
+      }
+
+      const amount = parseInt(dollars) * 100 + parseInt(cents)
       accrue(balance, debitAccount, amount)
       accrue(balance, creditAccount, -amount)
     }

@@ -21,16 +21,23 @@ describe(Summary, () => {
   test('one transfer', () => {
     const sheet = TextSheet.fromArray(
       ['date', 'memo', 'debitAccount', 'creditAccount', 'amount'],
-      ['date', 'memo', 'debitAccount', 'creditAccount', '1000'],
+      ['date', 'memo', 'debitAccount', 'creditAccount', ' $ 1000.50 '],
     )
     const actual = Summary.fromTextSheet(sheet)
     expect(actual).toEqual({
       type: 'cents',
       amount: 0,
       children: new Map([
-        ['debitAccount', { type: 'cents', amount: 1000 }],
-        ['creditAccount', { type: 'cents', amount: -1000 }],
+        ['debitAccount', { type: 'cents', amount: 100050 }],
+        ['creditAccount', { type: 'cents', amount: -100050 }],
       ]),
     })
+  })
+  test('throw error for partial cents', () => {
+    const sheet = TextSheet.fromArray(
+      ['date', 'memo', 'debitAccount', 'creditAccount', 'amount'],
+      ['date', 'memo', 'debitAccount', 'creditAccount', ' $ 1000.505 '],
+    )
+    expect(() => Summary.fromTextSheet(sheet)).toThrow(Summary.errors.PARTIAL_CENTS)
   })
 })
