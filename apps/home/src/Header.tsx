@@ -8,9 +8,21 @@ export function Header() {
         <Link to="/" style={{ color: 'inherit' }}>
           <h1 style={{ margin: '0.125em 0' }}>Cruftbusters LLC</h1>
         </Link>
-        <Link to="/bookkeeping">
-          <span>bookkeeping</span>
-        </Link>
+        <div
+          style={{
+            display: 'inline-grid',
+            gridAutoColumns: 'auto',
+            gridAutoFlow: 'column',
+            gridGap: '1em',
+          }}
+        >
+          <Link to="/bookkeeping">
+            <span>bookkeeping</span>
+          </Link>
+          <Link to="/bookkeeping/v2">
+            <span>v2</span>
+          </Link>
+        </div>
         <a
           hidden={true}
           href="https://ccfs.sos.wa.gov/#/expressAnnualReport/1593817"
