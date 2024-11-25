@@ -21,8 +21,8 @@ test('add two movements', async ({ page }) => {
       ).toText(),
     )
 
-  await expect(page.getByText('total: 0')).toBeVisible()
-  await expect(page.getByText('expense: 400000 cents')).toBeVisible()
-  await expect(page.getByText('liability: -300000 cents')).toBeVisible()
-  await expect(page.getByText('asset: -100000 cents')).toBeVisible()
+  await expect(page.getByText('total: $ 0.00 ')).toBeVisible()
+  await expect(page.getByText('expense: $ 4,000.00')).toBeVisible()
+  await expect(page.getByText('liability: ( $ 3,000.00 )')).toBeVisible()
+  await expect(page.getByText('asset: ( $ 1,000.00 )')).toBeVisible()
 })
