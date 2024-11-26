@@ -3,6 +3,7 @@ import { TextSheet } from './TextSheet'
 import { useState } from 'react'
 import { Balance } from './types'
 import { Summary } from './Summary'
+import { MoneyFormat } from './MoneyFormat'
 
 export function BookkeepingV2() {
   const [balance, setBalance] = useState<Balance>()
@@ -34,17 +35,11 @@ export function BookkeepingV2() {
 }
 
 function BalanceView({ name, balance }: { name: string; balance: Balance }) {
-  const amount = Math.abs(balance.amount)
-  const dollars = commas(Math.floor(amount / 100).toString())
-  const cents = (amount % 100).toString().padStart(2, '0')
-  let amountText = ` $ ${dollars}.${cents} `
-  if (balance.amount < 0) {
-    amountText = ` ( ${amountText} )`
-  }
+  const formattedBalance = MoneyFormat.format(balance)
 
   return (
     <div>
-      {` ${name}: ${amountText}`}
+      {` ${name}: ${formattedBalance}`}
       <div style={{ marginLeft: '1em' }}>
         {balance.children &&
           Array.from(balance.children.entries()).map(([key, balance]) => (
