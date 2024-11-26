@@ -1,3 +1,4 @@
+import { MoneyFormat } from './MoneyFormat'
 import { TextSheet } from './TextSheet'
 import { Balance } from './types'
 
@@ -34,23 +35,10 @@ export class Summary {
     const balance: Balance = { type: 'cents', amount: 0 }
 
     for (const record of sheet.iterator) {
-      let [debitAccount, creditAccount, amountAsString] = map(record)
-
-      if (!amountAsString.startsWith(' $ ')) {
-        throw Error(
-          `expected amount to be prefixed with ' $ ' got '${amountAsString}'`,
-        )
-      }
-
-      amountAsString = amountAsString.slice(3).replace(',', '').trim()
-      const [dollars, cents] = amountAsString.split('.')
-      if (cents.length > 2) {
-        throw Error(Summary.errors.PARTIAL_CENTS)
-      }
-
-      const amount = parseInt(dollars) * 100 + parseInt(cents)
-      accrue(balance, debitAccount, amount)
-      accrue(balance, creditAccount, -amount)
+      const [debitAccount, creditAccount, amountAsString] = map(record)
+      const value = MoneyFormat.parse(amountAsString)
+      accrue(balance, debitAccount, value.amount)
+      accrue(balance, creditAccount, -value.amount)
     }
 
     return balance

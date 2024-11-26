@@ -49,14 +49,3 @@ function BalanceView({ name, balance }: { name: string; balance: Balance }) {
     </div>
   )
 }
-
-function commas(digits: string) {
-  const result = []
-  for (let index = 0; index < digits.length; index++) {
-    result.unshift(digits[digits.length - 1 - index])
-    if (index % 3 === 2 && index < digits.length - 1) {
-      result.unshift(',')
-    }
-  }
-  return result.join('')
-}
