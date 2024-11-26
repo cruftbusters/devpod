@@ -9,15 +9,25 @@ export class TextSheet {
   }
 
   static fromText(text: string) {
+    let mode
     const rows = []
     for (const line of text.split('\n')) {
       const values = ['']
 
       let isQuoted = false
       for (const char of line) {
-        if (char === '"') {
-          isQuoted = !isQuoted
-        } else if (!isQuoted && char === ',') {
+        if (values[values.length - 1].length === 0 && char === '"') {
+          isQuoted = true
+        } else if (isQuoted && char === '"') {
+          isQuoted = false
+        } else if (
+          !isQuoted &&
+          mode === undefined &&
+          (char === ',' || char === '\t')
+        ) {
+          mode = char
+          values.push('')
+        } else if (!isQuoted && char === mode) {
           values.push('')
         } else {
           values[values.length - 1] += char
