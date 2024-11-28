@@ -3,7 +3,7 @@ import { TextSheet } from './TextSheet'
 import { useState } from 'react'
 import { Balance } from './types'
 import { Summary } from './Summary'
-import { MoneyFormat } from './MoneyFormat'
+import { AmountFormat } from './AmountFormat'
 
 export function BookkeepingV2() {
   const [balance, setBalance] = useState<Balance>()
@@ -35,7 +35,7 @@ export function BookkeepingV2() {
 }
 
 function BalanceView({ name, balance }: { name: string; balance: Balance }) {
-  const amountText = MoneyFormat.format(balance)
+  const amountText = AmountFormat.format(balance)
 
   return (
     <div>

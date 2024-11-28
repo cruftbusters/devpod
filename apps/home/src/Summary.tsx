@@ -1,4 +1,4 @@
-import { MoneyFormat } from './MoneyFormat'
+import { AmountFormat } from './AmountFormat'
 import { TextSheet } from './TextSheet'
 import { Balance } from './types'
 
@@ -32,13 +32,13 @@ export class Summary {
       return values
     }
 
-    const balance: Balance = { type: 'cents', amount: 0 }
+    const balance: Balance = { value: 0, unit: 'cents' }
 
     for (const record of sheet.iterator) {
-      const [debitAccount, creditAccount, amountAsString] = map(record)
-      const value = MoneyFormat.parse(amountAsString)
-      accrue(balance, debitAccount, value.amount)
-      accrue(balance, creditAccount, -value.amount)
+      const [debitAccount, creditAccount, amountText] = map(record)
+      const amount = AmountFormat.parse(amountText)
+      accrue(balance, debitAccount, amount.value)
+      accrue(balance, creditAccount, -amount.value)
     }
 
     return balance
@@ -46,14 +46,14 @@ export class Summary {
 }
 
 function accrue(balance: Balance, name: string, amount: number) {
-  balance.amount += amount
+  balance.value += amount
   if (balance.children === undefined) {
     balance.children = new Map()
   }
   let child = balance.children.get(name)
   if (child === undefined) {
-    child = { type: 'cents', amount: 0 }
+    child = { value: 0, unit: 'cents' }
     balance.children.set(name, child)
   }
-  child.amount += amount
+  child.value += amount
 }

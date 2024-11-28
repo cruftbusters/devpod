@@ -1,2 +1,2 @@
-export type Money = { type: 'cents'; amount: number }
-export type Balance = Money & { children?: Map<string, Balance> }
+export type Amount = { value: number; unit: 'cents' }
+export type Balance = Amount & { children?: Map<string, Balance> }

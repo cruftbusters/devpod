@@ -1,27 +1,27 @@
-import { Money } from './types'
+import { Amount } from './types'
 
-export class MoneyFormat {
+export class AmountFormat {
   static errors = {
     PARTIAL_CENTS: 'partial cents is not implemented',
   }
-  static parse(amountAsString: string): Money {
-    amountAsString = amountAsString.trim()
-    const sign = amountAsString[0] === '(' ? -1 : 1
-    amountAsString = amountAsString.replace(/[^\d.]/g, '')
-    const [dollarsAsString, centsAsString] = amountAsString.split('.')
+  static parse(text: string): Amount {
+    text = text.trim()
+    const sign = text[0] === '(' ? -1 : 1
+    text = text.replace(/[^\d.]/g, '')
+    const [dollarsAsString, centsAsString] = text.split('.')
     const dollars = parseInt(dollarsAsString)
     const cents = parseInt(centsAsString)
     if (cents > 99) {
-      throw Error(MoneyFormat.errors.PARTIAL_CENTS)
+      throw Error(AmountFormat.errors.PARTIAL_CENTS)
     }
-    return { type: 'cents', amount: sign * (cents + dollars * 100) }
+    return { value: sign * (cents + dollars * 100), unit: 'cents' }
   }
-  static format(money: Money) {
-    if (money.amount % 1 > 0) {
-      throw Error(MoneyFormat.errors.PARTIAL_CENTS)
+  static format(money: Amount) {
+    if (money.value % 1 > 0) {
+      throw Error(AmountFormat.errors.PARTIAL_CENTS)
     }
-    const sign = Math.sign(money.amount)
-    const amount = Math.abs(money.amount)
+    const sign = Math.sign(money.value)
+    const amount = Math.abs(money.value)
     const dollars = Math.floor(amount / 100).toString()
     const dollarsWithCommasChars = []
     for (let index = 0; index < dollars.length; index++) {
