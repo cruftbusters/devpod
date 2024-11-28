@@ -35,11 +35,11 @@ export function BookkeepingV2() {
 }
 
 function BalanceView({ name, balance }: { name: string; balance: Balance }) {
-  const formattedBalance = MoneyFormat.format(balance)
+  const amountText = MoneyFormat.format(balance)
 
   return (
     <div>
-      {` ${name}: ${formattedBalance}`}
+      {` ${name}: ${amountText} `}
       <div style={{ marginLeft: '1em' }}>
         {balance.children &&
           Array.from(balance.children.entries()).map(([key, balance]) => (
