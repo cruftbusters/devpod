@@ -9,7 +9,7 @@ test('has heading text', async ({ page }) => {
   ).toBeVisible()
 })
 
-test('add two movements', async ({ page }) => {
+test('summarize transfers', async ({ page }) => {
   await page.goto('http://localhost:5173/bookkeeping/v2')
   await page
     .getByLabel('text sheet')
