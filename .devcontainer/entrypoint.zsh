@@ -19,4 +19,6 @@ screen -d -m -S home-dev pnpm -F home dev
 screen -d -m -S home-test pnpm -F home exec vitest --ui --api 5174
 screen -d -m -S home-e2e pnpm -F home exec playwright test --ui --ui-port 5175
 
+nginx
+
 /bin/zsh
