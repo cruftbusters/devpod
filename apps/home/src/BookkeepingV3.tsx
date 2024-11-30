@@ -3,11 +3,11 @@ import { HeaderedSheet } from './HeaderedSheet'
 import { MarginAround } from './MarginAround'
 import { parseAmount } from './parseAmount'
 import { TextSheet } from './TextSheet'
-import { Amount2 } from './types'
 import { formatAmount } from './formatAmount'
+import { Balance } from './Balance'
 
 export function BookkeepingV3() {
-  const [summary, setSummary] = useState(new Map<string, Amount2>())
+  const [balance, setBalance] = useState(new Balance())
   return (
     <>
       <MarginAround>
@@ -23,13 +23,16 @@ export function BookkeepingV3() {
                   ['debitAccount', 'creditAccount', 'amount'],
                   TextSheet.fromText(e.target.value),
                 )
-                const summary = new Map()
+                const balance = new Balance()
                 for (const [debitAccount, creditAccount, amountText] of sheet) {
                   const amount = parseAmount(amountText)
-                  summary.set(debitAccount, amount)
-                  summary.set(creditAccount, { ...amount, sign: -amount.sign })
+                  balance.accrue(debitAccount, amount)
+                  balance.accrue(creditAccount, {
+                    ...amount,
+                    sign: -amount.sign,
+                  })
                 }
-                setSummary(summary)
+                setBalance(balance)
               }}
             />
           </div>
@@ -38,7 +41,7 @@ export function BookkeepingV3() {
       <MarginAround>
         <h3>Summary</h3>
         {' total: empty '}
-        {Array.from(summary.entries()).map(([account, amount]) => (
+        {Array.from(balance.accounts.entries()).map(([account, amount]) => (
           <div key={account}>
             {account}
             {': '}

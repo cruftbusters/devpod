@@ -37,15 +37,23 @@ test.describe('v3', () => {
       .fill(
         TextSheet.fromArray(
           ['debitAccount', 'creditAccount', 'amount'],
-          ['hours to income', 'worked hours', ' 40 hours '],
+          ['hours invoiced', 'hours worked', ' 40 hours '],
           ['accounts receivable', 'income', ' $ 40,000.00 '],
+          ['hours invoiced', 'hours worked', ' 37.50 hours '],
+          ['accounts receivable', 'income', ' $ 37,500.00 '],
+          ['checking account', 'accounts receivable', ' $ 40,000.00 '],
         ).toText(),
       )
 
     await expect(page.getByText('total: empty')).toBeVisible()
-    await expect(page.getByText('hours to income: 40 hours')).toBeVisible()
-    await expect(page.getByText('worked hours: ( 40 hours )')).toBeVisible()
-    await expect(page.getByText('accounts receivable: $ 40,000.00 ')).toBeVisible()
-    await expect(page.getByText('income: ( $ 40,000.00 ) ')).toBeVisible()
+    await expect(page.getByText('hours invoiced: 77.50 hours')).toBeVisible()
+    await expect(page.getByText('hours worked: ( 77.50 hours )')).toBeVisible()
+    await expect(
+      page.getByText('accounts receivable: $ 37,500.00 '),
+    ).toBeVisible()
+    await expect(page.getByText('income: ( $ 77,500.00 ) ')).toBeVisible()
+    await expect(
+      page.getByText('checking account: $ 40,000.00 '),
+    ).toBeVisible()
   })
 })
