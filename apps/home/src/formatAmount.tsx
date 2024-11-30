@@ -17,7 +17,7 @@ export function formatAmount({
     .filter((text) => text.length > 0)
     .join(' ')
 
-  return sign < 0 ? ` ( ${unsigned} )` : unsigned
+  return ` ${sign < 0 ? ` ( ${unsigned} )` : unsigned} `
 }
 
 function commas(digits: string) {

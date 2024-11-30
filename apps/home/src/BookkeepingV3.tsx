@@ -8,6 +8,7 @@ import { Balance } from './Balance'
 
 export function BookkeepingV3() {
   const [balance, setBalance] = useState(new Balance())
+  const [error, setError] = useState<string>()
   return (
     <>
       <MarginAround>
@@ -26,11 +27,17 @@ export function BookkeepingV3() {
                 const balance = new Balance()
                 for (const [debitAccount, creditAccount, amountText] of sheet) {
                   const amount = parseAmount(amountText)
-                  balance.accrue(debitAccount, amount)
-                  balance.accrue(creditAccount, {
-                    ...amount,
-                    sign: -amount.sign,
-                  })
+                  try {
+                    balance.accrue(debitAccount, amount)
+                    balance.accrue(creditAccount, {
+                      ...amount,
+                      sign: -amount.sign,
+                    })
+                  } catch (cause) {
+                    if (cause instanceof Error) {
+                      setError(cause.message)
+                    }
+                  }
                 }
                 setBalance(balance)
               }}
@@ -48,6 +55,7 @@ export function BookkeepingV3() {
             {formatAmount(amount)}
           </div>
         ))}
+        {error && <div>{`error: ${error}`}</div>}
       </MarginAround>
     </>
   )

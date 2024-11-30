@@ -52,8 +52,26 @@ test.describe('v3', () => {
       page.getByText('accounts receivable: $ 37,500.00 '),
     ).toBeVisible()
     await expect(page.getByText('income: ( $ 77,500.00 ) ')).toBeVisible()
+    await expect(page.getByText('checking account: $ 40,000.00 ')).toBeVisible()
+
+    await expect(page.getByText(`error: `)).not.toBeVisible()
+  })
+  test('adding mixed units is not supported', async ({ page }) => {
+    await page.goto('http://localhost:5173/bookkeeping/v3')
+    await page
+      .getByLabel('text sheet')
+      .fill(
+        TextSheet.fromArray(
+          ['debitAccount', 'creditAccount', 'amount'],
+          ['hours invoiced', 'hours worked', ' 40 hours '],
+          ['hours invoiced', 'hours worked', ' $ 40,000 '],
+        ).toText(),
+      )
+
     await expect(
-      page.getByText('checking account: $ 40,000.00 '),
+      page.getByText(
+        `expected operands with matching prefix and suffix got ' 40 hours ' and ' $ 40,000 '`,
+      ),
     ).toBeVisible()
   })
 })

@@ -1,3 +1,4 @@
+import { formatAmount } from './formatAmount'
 import { Amount2 } from './types'
 
 export class Balance {
@@ -15,6 +16,11 @@ export class Balance {
 }
 
 function add(left: Amount2, right: Amount2) {
+  if (left.prefix !== right.prefix || left.suffix !== right.suffix) {
+    throw Error(
+      `expected operands with matching prefix and suffix got '${formatAmount(left)}' and '${formatAmount(right)}'`,
+    )
+  }
   const precision = Math.max(left.precision, right.precision)
   const result =
     left.sign * parseInt(left.digits + '0'.repeat(precision - left.precision)) +
