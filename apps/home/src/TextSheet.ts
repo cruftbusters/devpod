@@ -9,36 +9,37 @@ export class TextSheet {
   }
 
   static fromText(text: string) {
-    let mode
-    const rows = []
-    for (const line of text.split('\n')) {
-      const values = ['']
+    function* it() {
+      let mode
+      for (const line of text.split('\n')) {
+        const values = ['']
 
-      let isQuoted = false
-      for (const char of line) {
-        if (values[values.length - 1].length === 0 && char === '"') {
-          isQuoted = true
-        } else if (isQuoted && char === '"') {
-          isQuoted = false
-        } else if (
-          !isQuoted &&
-          mode === undefined &&
-          (char === ',' || char === '\t')
-        ) {
-          mode = char
-          values.push('')
-        } else if (!isQuoted && char === mode) {
-          values.push('')
-        } else {
-          values[values.length - 1] += char
+        let isQuoted = false
+        for (const char of line) {
+          if (values[values.length - 1].length === 0 && char === '"') {
+            isQuoted = true
+          } else if (isQuoted && char === '"') {
+            isQuoted = false
+          } else if (
+            !isQuoted &&
+            mode === undefined &&
+            (char === ',' || char === '\t')
+          ) {
+            mode = char
+            values.push('')
+          } else if (!isQuoted && char === mode) {
+            values.push('')
+          } else {
+            values[values.length - 1] += char
+          }
+        }
+
+        if (values.length > 1 || values[0].length > 0) {
+          yield values
         }
       }
-
-      if (values.length > 1 || values[0].length > 0) {
-        rows.push(values)
-      }
     }
-    return new TextSheet(rows.values())
+    return new TextSheet(it())
   }
 
   toArray() {
@@ -53,5 +54,9 @@ export class TextSheet {
           .join(','),
       )
       .join('\n')
+  }
+
+  [Symbol.iterator]() {
+    return this.iterator
   }
 }
