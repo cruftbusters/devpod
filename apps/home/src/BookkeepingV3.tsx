@@ -4,10 +4,10 @@ import { MarginAround } from './MarginAround'
 import { parseAmount } from './parseAmount'
 import { TextSheet } from './TextSheet'
 import { formatAmount } from './formatAmount'
-import { Balance } from './Balance'
+import { AccountBalances, accrueBalance } from './Balance'
 
 export function BookkeepingV3() {
-  const [balance, setBalance] = useState(new Balance())
+  const [balance, setBalance] = useState<AccountBalances>(new Map())
   const [error, setError] = useState<string>()
   return (
     <>
@@ -24,12 +24,12 @@ export function BookkeepingV3() {
                   ['debitAccount', 'creditAccount', 'amount'],
                   TextSheet.fromText(e.target.value),
                 )
-                const balance = new Balance()
+                const balance = new Map()
                 for (const [debitAccount, creditAccount, amountText] of sheet) {
                   const amount = parseAmount(amountText)
                   try {
-                    balance.accrue(debitAccount, amount)
-                    balance.accrue(creditAccount, {
+                    accrueBalance(balance, debitAccount.split(':'), amount)
+                    accrueBalance(balance, creditAccount.split(':'), {
                       ...amount,
                       sign: -amount.sign,
                     })
@@ -47,15 +47,26 @@ export function BookkeepingV3() {
       </MarginAround>
       <MarginAround>
         <h3>Summary</h3>
-        {Array.from(balance.accounts.entries()).map(([account, amount]) => (
-          <div key={account}>
-            {account}
-            {': '}
-            {formatAmount(amount)}
-          </div>
-        ))}
+        <BalanceView balance={balance} />
         {error && <div>{`error: ${error}`}</div>}
       </MarginAround>
     </>
+  )
+}
+
+function BalanceView({ balance }: { balance: AccountBalances }) {
+  return Array.from(balance.entries()).map(
+    ([account, { amount, accounts: children }]) => (
+      <div key={account}>
+        {account}
+        {': '}
+        {formatAmount(amount)}
+        {children && (
+          <div style={{ marginLeft: '1em' }}>
+            <BalanceView balance={children} />
+          </div>
+        )}
+      </div>
+    ),
   )
 }

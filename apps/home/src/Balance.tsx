@@ -1,18 +1,33 @@
 import { formatAmount } from './formatAmount'
 import { Amount2 } from './types'
 
-export class Balance {
-  readonly accounts = new Map<string, Amount2>()
+export type AccountBalances = Map<
+  string,
+  { amount: Amount2; accounts?: AccountBalances }
+>
 
-  accrue(account: string, amount: Amount2) {
-    let balance = this.accounts.get(account)
-    if (balance === undefined) {
-      balance = amount
-      this.accounts.set(account, balance)
-    } else {
-      this.accounts.set(account, add(balance, amount))
-    }
+export function accrueBalance(
+  accounts: AccountBalances,
+  path: string[],
+  amount: Amount2,
+) {
+  const account = path.shift()
+  if (account === undefined) {
+    return
   }
+  let balance = accounts.get(account)
+  if (balance === undefined) {
+    balance = { amount }
+    accounts.set(account, balance)
+  } else {
+    balance.amount = add(balance.amount, amount)
+  }
+
+  if (balance.accounts === undefined) {
+    balance.accounts = new Map()
+  }
+  
+  accrueBalance(balance.accounts, path, amount)
 }
 
 function add(left: Amount2, right: Amount2) {

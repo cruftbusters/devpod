@@ -57,6 +57,29 @@ test.describe('v3', () => {
 
     await expect(page.getByText(`error: `)).not.toBeVisible()
   })
+  test('summarize sub accounts', async ({ page }) => {
+    await page.goto('http://localhost:5173/bookkeeping/v3')
+    await page
+      .getByLabel('text sheet')
+      .fill(
+        TextSheet.fromArray(
+          ['debitAccount', 'creditAccount', 'amount'],
+          ['hours invoiced:client a', 'hours worked:client a', ' 20 hours '],
+          ['hours invoiced:client b', 'hours worked:client b', ' 20 hours '],
+        ).toText(),
+      )
+
+    const hoursInvoiced = page.getByText('hours invoiced: 40 hours')
+    await expect(hoursInvoiced).toBeVisible()
+    await expect(hoursInvoiced.getByText('client a: 20 hours')).toBeVisible()
+    await expect(hoursInvoiced.getByText('client b: 20 hours')).toBeVisible()
+    const hoursWorked =  page.getByText('hours worked: ( 40 hours )')
+    await expect(hoursWorked).toBeVisible()
+    await expect(hoursWorked.getByText('client a: ( 20 hours )')).toBeVisible()
+    await expect(hoursWorked.getByText('client b: ( 20 hours )')).toBeVisible()
+
+    await expect(page.getByText(`error: `)).not.toBeVisible()
+  })
   test('adding mixed units is not supported', async ({ page }) => {
     await page.goto('http://localhost:5173/bookkeeping/v3')
     await page
