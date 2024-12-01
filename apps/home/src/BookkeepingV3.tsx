@@ -47,7 +47,6 @@ export function BookkeepingV3() {
       </MarginAround>
       <MarginAround>
         <h3>Summary</h3>
-        {' total: empty '}
         {Array.from(balance.accounts.entries()).map(([account, amount]) => (
           <div key={account}>
             {account}

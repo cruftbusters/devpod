@@ -46,7 +46,6 @@ test.describe('v3', () => {
         ).toText(),
       )
 
-    await expect(page.getByText('total: empty')).toBeVisible()
     await expect(page.getByText('hours invoiced: 77.50 hours')).toBeVisible()
     await expect(page.getByText('hours worked: ( 77.50 hours )')).toBeVisible()
     await expect(
