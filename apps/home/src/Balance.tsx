@@ -24,9 +24,12 @@ function add(left: Amount2, right: Amount2) {
 
   const precision = Math.max(left.precision, right.precision)
   const integer =
-    left.sign * parseInt(left.digits + '0'.repeat(precision - left.precision)) +
+    left.sign *
+      parseInt(left.digits) *
+      Math.pow(10, precision - left.precision) +
     right.sign *
-      parseInt(right.digits + '0'.repeat(precision - right.precision))
+      parseInt(right.digits) *
+      Math.pow(10, precision - right.precision)
   const result = Math.abs(integer).toString()
 
   return {
