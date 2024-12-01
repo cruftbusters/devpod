@@ -4,7 +4,7 @@ import { LedgerSummary } from './LedgerSummary'
 import { MovementEditor } from './MovementEditor'
 import { LedgerEditor } from './LedgerEditor'
 
-export function Bookkeeping() {
+export function BookkeepingV1() {
   const state = useLedgers()
 
   return (
