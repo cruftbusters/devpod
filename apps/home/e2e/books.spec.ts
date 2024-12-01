@@ -42,6 +42,7 @@ test.describe('v3', () => {
           ['hours invoiced', 'hours worked', ' 37.50 hours '],
           ['accounts receivable', 'income', ' $ 37,500.00 '],
           ['checking account', 'accounts receivable', ' $ 40,000.00 '],
+          ['income', 'income statement', ' $ 77,500.00 '],
         ).toText(),
       )
 
@@ -51,8 +52,9 @@ test.describe('v3', () => {
     await expect(
       page.getByText('accounts receivable: $ 37,500.00 '),
     ).toBeVisible()
-    await expect(page.getByText('income: ( $ 77,500.00 ) ')).toBeVisible()
+    await expect(page.getByText('income: $ 0.00 ')).toBeVisible()
     await expect(page.getByText('checking account: $ 40,000.00 ')).toBeVisible()
+    await expect(page.getByText('income statement: ( $ 77,500.00 ) ')).toBeVisible()
 
     await expect(page.getByText(`error: `)).not.toBeVisible()
   })
@@ -70,7 +72,7 @@ test.describe('v3', () => {
 
     await expect(
       page.getByText(
-        `expected operands with matching prefix and suffix got ' 40 hours ' and ' $ 40,000 '`,
+        `expected operands with matching prefix and suffix got ' 40 hours ' and ' $ 40,000.00 '`,
       ),
     ).toBeVisible()
   })

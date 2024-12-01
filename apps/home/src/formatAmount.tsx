@@ -7,6 +7,11 @@ export function formatAmount({
   precision,
   suffix,
 }: Amount2) {
+  for (; prefix === '$' && precision < 2; ) {
+    precision++
+    digits += '0'
+  }
+
   const unsigned = [
     prefix,
     precision > 0
