@@ -26,7 +26,7 @@ export function formatAmount({
 }
 
 function commas(digits: string) {
-  let result = []
+  const result = []
   for (let index = 0; index < digits.length; index++) {
     const k = digits.length - 1 - index
     result.unshift(digits[k])
