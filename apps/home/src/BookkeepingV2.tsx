@@ -5,6 +5,7 @@ import { parseAmount } from './parseAmount'
 import { TextSheet } from './TextSheet'
 import { formatAmount } from './formatAmount'
 import { AccountBalances, accrueBalance } from './Balance'
+import { VerticalTrack } from './VerticalTrack'
 
 export function BookkeepingV2() {
   const [balance, setBalance] = useState<AccountBalances>(new Map())
@@ -42,9 +43,9 @@ export function BookkeepingV2() {
   }, [text])
 
   return (
-    <>
+    <VerticalTrack>
       <MarginAround>
-        <h2>Bookkeeping v3</h2>
+        <h2>Bookkeeping v2</h2>
         <p>The first line is for headers. It needs to be something like:</p>
         <p style={{ fontFamily: 'monospace' }}>
           debitAccount,creditAccount,amount
@@ -74,7 +75,11 @@ export function BookkeepingV2() {
         <label>
           {' text sheet: '}
           <div>
-            <textarea onChange={(e) => setText(e.target.value)} value={text} />
+            <textarea
+              style={{ width: '100%', height: '5em' }}
+              onChange={(e) => setText(e.target.value)}
+              value={text}
+            />
           </div>
         </label>
       </MarginAround>
@@ -83,7 +88,7 @@ export function BookkeepingV2() {
         <BalanceView balance={balance} />
         {error && <div>{`error: ${error}`}</div>}
       </MarginAround>
-    </>
+    </VerticalTrack>
   )
 }
 

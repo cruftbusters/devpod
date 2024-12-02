@@ -15,7 +15,7 @@
 
 a {
   font-weight: 500;
-  color:pink;
+  color: pink;
   text-decoration: inherit;
 }
 a:hover {
@@ -24,10 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
@@ -35,7 +31,9 @@ h1 {
   line-height: 1.1;
 }
 
-button, input, select {
+button,
+input,
+select {
   padding: 0.25em 0.5em;
 }
 
