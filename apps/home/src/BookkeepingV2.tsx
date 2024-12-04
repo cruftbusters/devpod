@@ -7,10 +7,13 @@ import { formatAmount } from './formatAmount'
 import { AccountBalances, accrueBalance } from './Balance'
 import { VerticalTrack } from './VerticalTrack'
 import { useStatus } from './useStatus'
+import { Transfer } from './types'
 
 export function BookkeepingV2() {
-  const [text, setText] = useState('')
   const status = useStatus()
+
+  const [text, setText] = useState('')
+  const [transfers, setTransfers] = useState<Transfer[]>([])
   const [balance, setBalance] = useState<AccountBalances>(new Map())
 
   useEffect(() => {
@@ -20,10 +23,26 @@ export function BookkeepingV2() {
         TextSheet.fromText(text),
       )
 
-      const balance = new Map()
+      const transfers = []
 
       for (const [debitAccount, creditAccount, amountText] of sheet) {
         const amount = parseAmount(amountText)
+        transfers.push({ debitAccount, creditAccount, amount })
+      }
+
+      setTransfers(transfers)
+
+      status.info('successfully parsed text sheet')
+    } catch (cause) {
+      status.error('failed to parse text sheet', cause)
+    }
+  }, [text])
+
+  useEffect(() => {
+    try {
+      const balance = new Map()
+
+      for (const { debitAccount, creditAccount, amount } of transfers) {
         accrueBalance(balance, debitAccount.split(':'), amount)
         accrueBalance(balance, creditAccount.split(':'), {
           ...amount,
@@ -32,11 +51,12 @@ export function BookkeepingV2() {
       }
 
       setBalance(balance)
-      status.info('successfully summarized text sheet')
+
+      status.info('successfully summarized transfers')
     } catch (cause) {
-      status.error('failed to summarize text sheet', cause)
+      status.error('failed to summarize transfers', cause)
     }
-  }, [text])
+  }, [transfers])
 
   return (
     <VerticalTrack>

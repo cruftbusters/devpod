@@ -7,3 +7,4 @@ export type Amount2 = {
   suffix: string
 }
 export type Balance = Amount & { children?: Map<string, Balance> }
+export type Transfer = { debitAccount: string; creditAccount: string; amount: Amount2 }
