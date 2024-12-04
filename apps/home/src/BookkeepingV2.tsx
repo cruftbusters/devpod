@@ -6,11 +6,12 @@ import { TextSheet } from './TextSheet'
 import { formatAmount } from './formatAmount'
 import { AccountBalances, accrueBalance } from './Balance'
 import { VerticalTrack } from './VerticalTrack'
+import { useStatus } from './useStatus'
 
 export function BookkeepingV2() {
-  const [balance, setBalance] = useState<AccountBalances>(new Map())
-  const [error, setError] = useState<string>()
   const [text, setText] = useState('')
+  const status = useStatus()
+  const [balance, setBalance] = useState<AccountBalances>(new Map())
 
   useEffect(() => {
     try {
@@ -31,14 +32,9 @@ export function BookkeepingV2() {
       }
 
       setBalance(balance)
-      setError('')
+      status.info('successfully summarized text sheet')
     } catch (cause) {
-      let message = 'failed to summarize text sheet'
-      if (cause instanceof Error) {
-        message += ': ' + cause.message
-      }
-      console.error(message, cause)
-      setError(message)
+      status.error('failed to summarize text sheet', cause)
     }
   }, [text])
 
@@ -82,11 +78,11 @@ export function BookkeepingV2() {
             />
           </div>
         </label>
+        {status.message && <p>{status.message}</p>}
       </MarginAround>
       <MarginAround>
         <h3>Summary</h3>
         <BalanceView balance={balance} />
-        {error && <div>{`error: ${error}`}</div>}
       </MarginAround>
     </VerticalTrack>
   )
