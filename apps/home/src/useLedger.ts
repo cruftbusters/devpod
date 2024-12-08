@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
-import { formatAmount } from './formatAmount'
-import { HeaderedSheet } from './HeaderedSheet'
-import { parseAmount } from './parseAmount'
 import { TextSheet } from './TextSheet'
 import { Transfer } from './types'
 import { useStatus } from './useStatus'
-import { AccountBalances, accrueBalance } from './Balance'
+import { AccountBalances, summarize } from './Balance'
 
 export function useLedger() {
   const textStatus = useStatus()
@@ -17,63 +14,33 @@ export function useLedger() {
   const summaryStatus = useStatus()
   const [summary, setSummary] = useState<AccountBalances>(new Map())
 
-  function setText(value: string) {
+  function setText(text: string) {
     try {
-      _setText(value)
+      _setText(text)
+      _setTransfers(Array.from(TextSheet.fromText(text).toTransfers()))
 
-      const sheet = HeaderedSheet.fromTextSheet(
-        ['debitAccount', 'creditAccount', 'amount'],
-        TextSheet.fromText(value),
-      )
-
-      const transfers = []
-
-      for (const [debitAccount, creditAccount, amountText] of sheet) {
-        const amount = parseAmount(amountText)
-        transfers.push({ debitAccount, creditAccount, amount })
-      }
-
-      _setTransfers(transfers)
-
-      textStatus.info('successfully deserialized text sheet')
+      textStatus.info('successfully deserialized transfers from text')
       transfersStatus.clear()
     } catch (cause) {
-      textStatus.error('failed to deserialize text sheet', cause)
+      textStatus.error('failed to deserialize transfers from text', cause)
     }
   }
 
-  function setTransfers(value: Transfer[]) {
+  function setTransfers(transfers: Transfer[]) {
     try {
-      function* it() {
-        yield ['debitAccount', 'creditAccount', 'amount']
-        for (const { debitAccount, creditAccount, amount } of value) {
-          yield [debitAccount, creditAccount, formatAmount(amount)]
-        }
-      }
-      _setText(new TextSheet(it()).toText())
-      _setTransfers(value)
+      _setText(TextSheet.fromTransfers(transfers).toText())
+      _setTransfers(transfers)
 
       textStatus.clear()
-      transfersStatus.info('successfully serialized text sheet')
+      transfersStatus.info('successfully serialized transfers to text')
     } catch (cause) {
-      transfersStatus.error('failed to serialize text sheet', cause)
+      transfersStatus.error('failed to serialize transfers to text', cause)
     }
   }
 
   useEffect(() => {
     try {
-      const balance = new Map()
-
-      for (const { debitAccount, creditAccount, amount } of transfers) {
-        accrueBalance(balance, debitAccount.split(':'), amount)
-        accrueBalance(balance, creditAccount.split(':'), {
-          ...amount,
-          sign: -amount.sign,
-        })
-      }
-
-      setSummary(balance)
-
+      setSummary(summarize(transfers))
       summaryStatus.info('successfully summarized transfers')
     } catch (cause) {
       summaryStatus.error('failed to summarize transfers', cause)

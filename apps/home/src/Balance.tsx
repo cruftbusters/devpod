@@ -1,12 +1,26 @@
 import { formatAmount } from './formatAmount'
-import { Amount2 } from './types'
+import { Amount2, Transfer } from './types'
 
 export type AccountBalances = Map<
   string,
   { amount: Amount2; accounts?: AccountBalances }
 >
 
-export function accrueBalance(
+export function summarize(transfers: Transfer[]) {
+  const result = new Map()
+
+  for (const { debitAccount, creditAccount, amount } of transfers) {
+    accrueBalance(result, debitAccount.split(':'), amount)
+    accrueBalance(result, creditAccount.split(':'), {
+      ...amount,
+      sign: -amount.sign,
+    })
+  }
+
+  return result
+}
+
+function accrueBalance(
   accounts: AccountBalances,
   path: string[],
   amount: Amount2,
@@ -26,7 +40,7 @@ export function accrueBalance(
   if (balance.accounts === undefined) {
     balance.accounts = new Map()
   }
-  
+
   accrueBalance(balance.accounts, path, amount)
 }
 

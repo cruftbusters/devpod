@@ -1,3 +1,8 @@
+import { formatAmount } from './formatAmount'
+import { HeaderedSheet } from './HeaderedSheet'
+import { parseAmount } from './parseAmount'
+import { Transfer } from './types'
+
 export class TextSheet {
   iterator: IterableIterator<string[]>
   constructor(iterator: IterableIterator<string[]>) {
@@ -54,6 +59,28 @@ export class TextSheet {
           .join(','),
       )
       .join('\n')
+  }
+
+  static fromTransfers(transfers: Transfer[]) {
+    function* it() {
+      yield ['debitAccount', 'creditAccount', 'amount']
+      for (const { debitAccount, creditAccount, amount } of transfers) {
+        yield [debitAccount, creditAccount, formatAmount(amount)]
+      }
+    }
+    return new TextSheet(it())
+  }
+
+  *toTransfers() {
+    const records = HeaderedSheet.fromTextSheet(
+      ['debitAccount', 'creditAccount', 'amount'],
+      this,
+    )
+
+    for (const [debitAccount, creditAccount, amountText] of records) {
+      const amount = parseAmount(amountText)
+      yield { debitAccount, creditAccount, amount }
+    }
   }
 
   [Symbol.iterator]() {
