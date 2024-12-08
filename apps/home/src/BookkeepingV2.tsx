@@ -2,14 +2,14 @@ import { MarginAround } from './MarginAround'
 import { formatAmount } from './formatAmount'
 import { AccountBalances } from './Balance'
 import { VerticalTrack, VerticalTracks } from './VerticalTrack'
-import { Ledger } from './Ledger'
+import { useLedger } from './useLedger'
 import { Amount2, Transfer } from './types'
 import { useState } from 'react'
 import { parseAmount } from './parseAmount'
 import { useStatus } from './useStatus'
 
 export function BookkeepingV2() {
-  const ledger = Ledger()
+  const ledger = useLedger()
 
   return (
     <>
@@ -72,7 +72,7 @@ export function BookkeepingV2() {
   )
 }
 
-function TransferEditorText({ ledger }: { ledger: ReturnType<typeof Ledger> }) {
+function TransferEditorText({ ledger }: { ledger: ReturnType<typeof useLedger> }) {
   return (
     <>
       <h3>Transfer Editor (Text)</h3>
@@ -91,7 +91,7 @@ function TransferEditorText({ ledger }: { ledger: ReturnType<typeof Ledger> }) {
   )
 }
 
-function TransferEditorGrid({ ledger }: { ledger: ReturnType<typeof Ledger> }) {
+function TransferEditorGrid({ ledger }: { ledger: ReturnType<typeof useLedger> }) {
   function updateTransfer(
     index: number,
     update: (value: Transfer) => Transfer,
@@ -198,7 +198,7 @@ function AmountEditor({
   )
 }
 
-function Summary({ ledger }: { ledger: ReturnType<typeof Ledger> }) {
+function Summary({ ledger }: { ledger: ReturnType<typeof useLedger> }) {
   return (
     <>
       <h3>Summary</h3>

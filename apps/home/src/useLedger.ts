@@ -7,7 +7,7 @@ import { Transfer } from './types'
 import { useStatus } from './useStatus'
 import { AccountBalances, accrueBalance } from './Balance'
 
-export function Ledger() {
+export function useLedger() {
   const textStatus = useStatus()
   const [text, _setText] = useState('')
 
