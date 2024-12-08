@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export function useStatus() {
   const [message, setMessage] = useState<string>()
-  return {
+  return useMemo(() => ({
     clear: () => setMessage(undefined),
     error: (message: string, cause: unknown) => {
       console.error(message, cause)
@@ -13,5 +13,5 @@ export function useStatus() {
     },
     info: (message: string) => setMessage(message),
     message,
-  }
+  }), [message])
 }
