@@ -11,15 +11,15 @@ export function parseAmount(text: string): Amount2 {
 
   let char = chars.shift()
 
-  for (; char !== undefined && char.match(/[^0-9]/); char = chars.shift()) {
-    if (!char.match(/\s/)) {
-      prefix += char
-    }
-  }
-
   if (char === '-') {
     char = chars.shift()
     sign = -1
+  }
+
+  for (; char !== undefined && char.match(/[^0-9-]/); char = chars.shift()) {
+    if (!char.match(/\s/)) {
+      prefix += char
+    }
   }
 
   for (; char !== undefined && char.match(/[^\s.]/); char = chars.shift()) {
