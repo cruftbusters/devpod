@@ -1,8 +1,4 @@
 {
   "name": "cruftbusters.com",
-  "packageManager": "pnpm@9.12.2",
-  "scripts": {
-    "devcontainer:build": "docker build -f .devcontainer/dockerfile -t devcontainer .",
-    "devcontainer:run": ".devcontainer/run.zsh"
-  }
+  "packageManager": "pnpm@9.12.2"
 }
