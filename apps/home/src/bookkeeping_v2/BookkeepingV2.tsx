@@ -1,4 +1,4 @@
-import { MarginAround } from './MarginAround'
+import { MarginAround } from '../MarginAround'
 import { formatAmount } from './formatAmount'
 import { AccountBalances } from './Balance'
 import { VerticalTrack, VerticalTracks } from './VerticalTrack'

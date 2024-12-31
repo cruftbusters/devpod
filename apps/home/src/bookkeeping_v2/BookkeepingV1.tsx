@@ -1,5 +1,5 @@
 import { useLedgers } from './database'
-import { MarginAboveBelow, MarginAround } from './MarginAround'
+import { MarginAboveBelow, MarginAround } from '../MarginAround'
 import { LedgerSummary } from './LedgerSummary'
 import { MovementEditor } from './MovementEditor'
 import { LedgerEditor } from './LedgerEditor'

@@ -8,7 +8,7 @@ import {
 } from './database'
 import { v4 as uuidv4 } from 'uuid'
 import { Grid, GridRow } from './Grid'
-import { MarginAboveBelow } from './MarginAround'
+import { MarginAboveBelow } from '../MarginAround'
 import { Fragment } from 'react/jsx-runtime'
 
 export function MovementEditor({ ledger }: { ledger?: Ledger }) {

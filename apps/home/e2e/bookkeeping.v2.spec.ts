@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { TextSheet } from '../src/TextSheet'
+import { TextSheet } from '../src/bookkeeping_v2/TextSheet'
 
 test('has heading text', async ({ page }) => {
   await page.goto('http://localhost:5173/bookkeeping/v2')
