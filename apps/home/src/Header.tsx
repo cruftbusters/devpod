@@ -19,6 +19,9 @@ export function Header() {
           <Link to="/bookkeeping">
             <span>bookkeeping</span>
           </Link>
+          <Link to="/bookkeeping/v2">
+            <span>v2</span>
+          </Link>
           <Link to="/bookkeeping/v1">
             <span>v1</span>
           </Link>

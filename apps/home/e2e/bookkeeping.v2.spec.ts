@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test'
 import { TextSheet } from '../src/TextSheet'
 
 test('has heading text', async ({ page }) => {
-  await page.goto('http://localhost:5173/bookkeeping')
+  await page.goto('http://localhost:5173/bookkeeping/v2')
 
   await expect(page.getByRole('heading', { name: 'Bookkeeping' })).toBeVisible()
 })
 
 test('summarize transfers', async ({ page }) => {
-  await page.goto('http://localhost:5173/bookkeeping')
+  await page.goto('http://localhost:5173/bookkeeping/v2')
   await page
     .getByLabel('text sheet')
     .fill(
@@ -37,7 +37,7 @@ test('summarize transfers', async ({ page }) => {
   await expect(page.getByText(`error: `)).not.toBeVisible()
 })
 test('summarize sub accounts', async ({ page }) => {
-  await page.goto('http://localhost:5173/bookkeeping')
+  await page.goto('http://localhost:5173/bookkeeping/v2')
   await page
     .getByLabel('text sheet')
     .fill(
@@ -60,7 +60,7 @@ test('summarize sub accounts', async ({ page }) => {
   await expect(page.getByText(`error: `)).not.toBeVisible()
 })
 test('adding mixed units is not supported', async ({ page }) => {
-  await page.goto('http://localhost:5173/bookkeeping')
+  await page.goto('http://localhost:5173/bookkeeping/v2')
   await page
     .getByLabel('text sheet')
     .fill(
