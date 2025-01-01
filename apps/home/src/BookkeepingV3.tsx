@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { MarginAround } from './MarginAround'
 
 export function BookkeepingV3() {
@@ -14,26 +14,36 @@ export function BookkeepingV3() {
   )
 }
 
-function useJournal() {
-  type Transfer = { credit: string; debit: string; amount: string }
+type Transfer = { credit: string; debit: string; amount: string }
 
+function useJournal() {
   const [transfers, setTransfers] = useState<Transfer[]>([])
 
-  async function add() {
-    setTransfers((transfers) =>
+  return useMemo(
+    () => new Journal(transfers, setTransfers),
+    [transfers, setTransfers],
+  )
+}
+
+class Journal {
+  constructor(
+    public transfers: Transfer[],
+    private setTransfers: Dispatch<SetStateAction<Transfer[]>>,
+  ) {}
+
+  addTransfer() {
+    this.setTransfers((transfers) =>
       transfers.concat([{ credit: '', debit: '', amount: '' }]),
     )
   }
 
-  function set(index: number, block: (transfer: Transfer) => Transfer) {
-    setTransfers((transfers) =>
+  updateTransfer(index: number, block: (transfer: Transfer) => Transfer) {
+    this.setTransfers((transfers) =>
       transfers.map((transfer, k) =>
         k === index ? block(transfer) : transfer,
       ),
     )
   }
-
-  return useMemo(() => ({ add, set, transfers }), [transfers])
 }
 
 function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
@@ -54,28 +64,28 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
             <TextField
               name={'credit'}
               onChange={(credit) =>
-                journal.set(index, (transfer) => ({ ...transfer, credit }))
+                journal.updateTransfer(index, (transfer) => ({ ...transfer, credit }))
               }
               value={transfer.credit}
             />
             <TextField
               name={'debit'}
               onChange={(debit) =>
-                journal.set(index, (transfer) => ({ ...transfer, debit }))
+                journal.updateTransfer(index, (transfer) => ({ ...transfer, debit }))
               }
               value={transfer.debit}
             />
             <TextField
               name={'amount'}
               onChange={(amount) =>
-                journal.set(index, (transfer) => ({ ...transfer, amount }))
+                journal.updateTransfer(index, (transfer) => ({ ...transfer, amount }))
               }
               value={transfer.amount}
             />
           </div>
         </div>
       ))}
-      <button onClick={() => journal.add()}>add transfer</button>
+      <button onClick={() => journal.addTransfer()}>add transfer</button>
     </>
   )
 }
