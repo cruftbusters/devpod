@@ -19,15 +19,25 @@ test('summarize two transfers', async ({ page }) => {
   await row1.getByLabel('debit').fill('liability:client receivable')
   await row1.getByLabel('amount').fill(' $ 1,000.00 ')
 
-  const summary = page.getByText('summary')
-  expect(summary.getByText('equity:capital contribution')).toContainText(
+  await page.getByRole('button', { name: 'add transfer' }).click()
+  const row2 = page.getByText('2')
+  await row2.getByLabel('date').fill('2025-01-03')
+  await row2.getByLabel('memo').fill('')
+  await row2.getByLabel('credit').fill('liability:client receivable')
+  await row2.getByLabel('debit').fill('asset:checking account')
+  await row2.getByLabel('amount').fill(' $ 1,000.00 ')
+
+  expect(page.getByText('equity:capital contribution')).toContainText(
     ' ( $ 300.00 ) ',
   )
-  expect(summary.getByText('expense:insurance')).toContainText(' $ 300.00 ')
-  expect(summary.getByText('income:via client')).toContainText(
+  expect(page.getByText('expense:insurance')).toContainText(' $ 300.00 ')
+  expect(page.getByText('income:via client')).toContainText(
     ' ( $ 1,000.00 ) ',
   )
-  expect(summary.getByText('liability:client receivable')).toContainText(
+  expect(page.getByText('liability:client receivable')).toContainText(
+    ' $ 0.00 ',
+  )
+  expect(page.getByText('asset:checking account')).toContainText(
     ' $ 1,000.00 ',
   )
 })
