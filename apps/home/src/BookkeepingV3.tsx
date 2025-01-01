@@ -51,70 +51,84 @@ class Journal {
 function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
   return (
     <>
-      {journal.transfers.map((transfer, index) => (
-        <div key={index}>
-          {` ${index} `}
-          <div>
-            <label>
-              {' date '}
-              <input />
-            </label>
-            <label>
-              {' memo '}
-              <input />
-            </label>
-            <TextField
-              name={'credit'}
-              onChange={(credit) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  credit,
-                }))
-              }
-              value={transfer.credit}
-            />
-            <TextField
-              name={'debit'}
-              onChange={(debit) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  debit,
-                }))
-              }
-              value={transfer.debit}
-            />
-            <TextField
-              name={'amount'}
-              onChange={(amount) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  amount,
-                }))
-              }
-              value={transfer.amount}
-            />
-          </div>
+      <div
+        style={{
+          display: 'inline-grid',
+          gridTemplateColumns: 'repeat(6,auto)',
+        }}
+      >
+        <div
+          style={{
+            gridColumn: '1/-1',
+            display: 'grid',
+            gridTemplateColumns: 'subgrid',
+            gridGap: '1em',
+          }}
+        >
+          <span>index</span>
+          <span>date</span>
+          <span>memo</span>
+          <span>credit</span>
+          <span>debit</span>
+          <span>amount</span>
         </div>
-      ))}
-      <button onClick={() => journal.addTransfer()}>add transfer</button>
+        {journal.transfers.map((transfer, index) => (
+          <div
+            key={index}
+            style={{
+              gridColumn: '1/-1',
+              display: 'grid',
+              gridTemplateColumns: 'subgrid',
+            }}
+          >
+            {` ${index} `}
+            <div
+              style={{
+                gridColumn: '2/-1',
+                display: 'grid',
+                gridTemplateColumns: 'subgrid',
+              }}
+            >
+              <input aria-label={'date'} />
+              <input aria-label={'memo'} />
+              <input
+                aria-label={'credit'}
+                onChange={(e) =>
+                  journal.updateTransfer(index, (transfer) => ({
+                    ...transfer,
+                    credit: e.target.value,
+                  }))
+                }
+                value={transfer.credit}
+              />
+              <input
+                aria-label={'debit'}
+                onChange={(e) =>
+                  journal.updateTransfer(index, (transfer) => ({
+                    ...transfer,
+                    debit: e.target.value,
+                  }))
+                }
+                value={transfer.debit}
+              />
+              <input
+                aria-label={'amount'}
+                onChange={(e) =>
+                  journal.updateTransfer(index, (transfer) => ({
+                    ...transfer,
+                    amount: e.target.value,
+                  }))
+                }
+                value={transfer.amount}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <p>
+        <button onClick={() => journal.addTransfer()}>add transfer</button>
+      </p>
     </>
-  )
-}
-
-function TextField({
-  name,
-  onChange,
-  value,
-}: {
-  onChange: (text: string) => void
-  value: string
-  name: string
-}) {
-  return (
-    <label>
-      {` ${name} `}
-      <input onChange={(e) => onChange(e.target.value)} value={value} />
-    </label>
   )
 }
 
