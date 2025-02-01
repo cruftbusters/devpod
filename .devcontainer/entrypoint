@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
 
-
 workspace=/root/cruftbusters.com
 ln -sf $workspace/.config /root/.config
 ln -sf $workspace/.devcontainer/nginx.conf /etc/nginx/nginx.conf
