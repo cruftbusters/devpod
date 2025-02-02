@@ -52,9 +52,11 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
   return (
     <>
       <div
+        className={'grid'}
         style={{
           display: 'inline-grid',
-          gridTemplateColumns: 'repeat(6,auto)',
+          gridTemplateColumns: 'repeat(6, auto)',
+          gridGap: '1px',
         }}
       >
         <div
