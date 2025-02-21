@@ -14,4 +14,5 @@ podman run -it --rm \
   -p 8080:8080 \
   -v $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) \
   -v $HOME/.gitconfig:/root/.gitconfig:ro \
+  -v $HOME/.ssh/known_hosts:/root/.ssh/known_hosts \
   $tag
