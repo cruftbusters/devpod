@@ -17,5 +17,8 @@ RUN tar -C /opt -xzf nvim-linux-x86_64.tar.gz && \
     ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin
 RUN echo EDITOR=nvim >> /root/.zshrc
 
+COPY .config/ /root/.config/
+RUN nvim --headless "+Lazy! sync" +qa
+
 COPY .devcontainer/entrypoint /root/entrypoint
 CMD /root/entrypoint
