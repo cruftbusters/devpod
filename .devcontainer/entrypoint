@@ -3,6 +3,9 @@
 workspace=/root/workspace
 ln -sf $workspace/.config /root/.config
 ln -sf $workspace/.devcontainer/nginx.conf /etc/nginx/nginx.conf
+ln -sf $workspace/.devcontainer/index.html /usr/share/nginx/html/index.html
+
+chmod a+x /root
 
 git clone git@github.com:cruftbusters/cruftbusters.com.git $workspace
 cd $workspace
