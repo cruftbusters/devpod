@@ -57,6 +57,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
           display: 'inline-grid',
           gridTemplateColumns: 'repeat(6, auto)',
           gridGap: '1px',
+          fontFamily: 'monospace',
         }}
       >
         <div
