@@ -68,7 +68,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
             gridGap: '1em',
           }}
         >
-          <span>index</span>
+          <span />
           <span>date</span>
           <span>memo</span>
           <span>credit</span>
@@ -77,6 +77,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
         </div>
         {journal.transfers.map((transfer, index) => (
           <div
+            aria-label={index}
             key={index}
             style={{
               gridColumn: '1/-1',
@@ -84,47 +85,47 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
               gridTemplateColumns: 'subgrid',
             }}
           >
-            {` ${index} `}
             <div
               style={{
-                gridColumn: '2/-1',
-                display: 'grid',
-                gridTemplateColumns: 'subgrid',
+                backgroundColor: 'rgb(43, 42, 51)',
+                padding: '0.25em 0.5em',
+                textAlign: 'right',
               }}
             >
-              <input aria-label={'date'} />
-              <input aria-label={'memo'} />
-              <input
-                aria-label={'credit'}
-                onChange={(e) =>
-                  journal.updateTransfer(index, (transfer) => ({
-                    ...transfer,
-                    credit: e.target.value,
-                  }))
-                }
-                value={transfer.credit}
-              />
-              <input
-                aria-label={'debit'}
-                onChange={(e) =>
-                  journal.updateTransfer(index, (transfer) => ({
-                    ...transfer,
-                    debit: e.target.value,
-                  }))
-                }
-                value={transfer.debit}
-              />
-              <input
-                aria-label={'amount'}
-                onChange={(e) =>
-                  journal.updateTransfer(index, (transfer) => ({
-                    ...transfer,
-                    amount: e.target.value,
-                  }))
-                }
-                value={transfer.amount}
-              />
+              {index}
             </div>
+            <input aria-label={'date'} />
+            <input aria-label={'memo'} />
+            <input
+              aria-label={'credit'}
+              onChange={(e) =>
+                journal.updateTransfer(index, (transfer) => ({
+                  ...transfer,
+                  credit: e.target.value,
+                }))
+              }
+              value={transfer.credit}
+            />
+            <input
+              aria-label={'debit'}
+              onChange={(e) =>
+                journal.updateTransfer(index, (transfer) => ({
+                  ...transfer,
+                  debit: e.target.value,
+                }))
+              }
+              value={transfer.debit}
+            />
+            <input
+              aria-label={'amount'}
+              onChange={(e) =>
+                journal.updateTransfer(index, (transfer) => ({
+                  ...transfer,
+                  amount: e.target.value,
+                }))
+              }
+              value={transfer.amount}
+            />
           </div>
         ))}
       </div>
