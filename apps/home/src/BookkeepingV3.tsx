@@ -1,58 +1,47 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { SetStateAction, useMemo } from 'react'
 import { MarginAround } from './MarginAround'
 import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
+import { useLiveQuery } from 'dexie-react-hooks'
+import Dexie, { EntityTable } from 'dexie'
 
 export function BookkeepingV3() {
-  const [transfers, setTransfers] = useState<Transfer[]>([])
-  const operations = useMemo(
-    () => new JournalOperations(setTransfers),
-    [setTransfers],
-  )
+  const transfers =
+    useLiveQuery(async () => {
+      const journal = await database.journals.get('default')
+      return journal?.transfers || []
+    }) || []
 
   return (
     <MarginAround>
       <h2>Bookkeeping v3</h2>
       <p>Welcome to v3</p>
-      <Editor transfers={transfers} operations={operations} />
+      <Editor transfers={transfers} />
       <Summary transfers={transfers} />
     </MarginAround>
   )
 }
 
-type Transfer = { credit: string; debit: string; amount: string }
-
-class JournalOperations {
-  constructor(private setTransfers: Dispatch<SetStateAction<Transfer[]>>) {}
-
-  addTransfer() {
-    this.setTransfers((transfers) =>
-      transfers.concat([{ credit: '', debit: '', amount: '' }]),
-    )
-  }
-
-  deleteTransfer(deleteIndex: number) {
-    this.setTransfers((transfers) =>
-      transfers.filter((_, index) => index !== deleteIndex),
-    )
-  }
-
-  updateTransfer(index: number, block: (transfer: Transfer) => Transfer) {
-    this.setTransfers((transfers) =>
-      transfers.map((transfer, k) =>
-        k === index ? block(transfer) : transfer,
-      ),
-    )
-  }
+const database = new Dexie('cruftbusters.com/bookkeeping_v3') as Dexie & {
+  journals: EntityTable<Journal, 'key'>
 }
 
-function Editor({
-  operations,
-  transfers,
-}: {
-  operations: JournalOperations
-  transfers: Transfer[]
-}) {
+database.version(1).stores({
+  journals: 'key',
+})
+
+type Journal = { key: string; transfers: Transfer[] }
+
+type Transfer = {
+  date: string
+  memo: string
+  credit: string
+  debit: string
+  amount: string
+}
+
+function Editor({ transfers }: { transfers: Transfer[] }) {
+  const operations = new JournalOperations(transfers)
   return (
     <>
       <div
@@ -98,8 +87,26 @@ function Editor({
             >
               {index}
             </div>
-            <input aria-label={'date'} />
-            <input aria-label={'memo'} />
+            <input
+              aria-label={'date'}
+              onChange={(e) =>
+                operations.updateTransfer(index, (transfer) => ({
+                  ...transfer,
+                  date: e.target.value,
+                }))
+              }
+              value={transfer.date}
+            />
+            <input
+              aria-label={'memo'}
+              onChange={(e) =>
+                operations.updateTransfer(index, (transfer) => ({
+                  ...transfer,
+                  memo: e.target.value,
+                }))
+              }
+              value={transfer.memo}
+            />
             <input
               aria-label={'credit'}
               onChange={(e) =>
@@ -147,6 +154,40 @@ function Editor({
   )
 }
 
+class JournalOperations {
+  constructor(private transfers: Transfer[]) {}
+
+  private setTransfers(updateOrBlock: SetStateAction<Transfer[]>) {
+    const update =
+      typeof updateOrBlock === 'function'
+        ? updateOrBlock(this.transfers)
+        : updateOrBlock
+    return database.journals.put({ key: 'default', transfers: update })
+  }
+
+  addTransfer() {
+    this.setTransfers((transfers) =>
+      transfers.concat([
+        { date: '', memo: '', credit: '', debit: '', amount: '' },
+      ]),
+    )
+  }
+
+  deleteTransfer(deleteIndex: number) {
+    this.setTransfers((transfers) =>
+      transfers.filter((_, index) => index !== deleteIndex),
+    )
+  }
+
+  updateTransfer(index: number, block: (transfer: Transfer) => Transfer) {
+    this.setTransfers((transfers) =>
+      transfers.map((transfer, k) =>
+        k === index ? block(transfer) : transfer,
+      ),
+    )
+  }
+}
+
 function Summary({ transfers }: { transfers: Transfer[] }) {
   const status = useStatus()
   const summary = useMemo(() => {
@@ -168,7 +209,7 @@ function Summary({ transfers }: { transfers: Transfer[] }) {
       status.error('failed to summarize journal', cause)
       return new Map()
     }
-  }, [transfers])
+  }, [status, transfers])
 
   return (
     <>
