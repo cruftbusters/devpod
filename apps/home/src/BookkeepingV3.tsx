@@ -133,6 +133,7 @@ function Editor({
             <button
               aria-label={'delete'}
               onClick={() => operations.deleteTransfer(index)}
+              style={{ borderRadius: 0, backgroundColor: 'rgb(43, 42, 51)' }}
             >
               &times;
             </button>
