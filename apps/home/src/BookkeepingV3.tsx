@@ -4,34 +4,26 @@ import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
 
 export function BookkeepingV3() {
-  const journal = useJournal()
+  const [transfers, setTransfers] = useState<Transfer[]>([])
+  const operations = useMemo(
+    () => new JournalOperations(setTransfers),
+    [setTransfers],
+  )
 
   return (
     <MarginAround>
       <h2>Bookkeeping v3</h2>
       <p>Welcome to v3</p>
-      <Editor journal={journal} />
-      <Summary journal={journal} />
+      <Editor transfers={transfers} operations={operations} />
+      <Summary transfers={transfers} />
     </MarginAround>
   )
 }
 
 type Transfer = { credit: string; debit: string; amount: string }
 
-function useJournal() {
-  const [transfers, setTransfers] = useState<Transfer[]>([])
-
-  return useMemo(
-    () => new Journal(transfers, setTransfers),
-    [transfers, setTransfers],
-  )
-}
-
-class Journal {
-  constructor(
-    public transfers: Transfer[],
-    private setTransfers: Dispatch<SetStateAction<Transfer[]>>,
-  ) {}
+class JournalOperations {
+  constructor(private setTransfers: Dispatch<SetStateAction<Transfer[]>>) {}
 
   addTransfer() {
     this.setTransfers((transfers) =>
@@ -54,7 +46,13 @@ class Journal {
   }
 }
 
-function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
+function Editor({
+  operations,
+  transfers,
+}: {
+  operations: JournalOperations
+  transfers: Transfer[]
+}) {
   return (
     <>
       <div
@@ -81,7 +79,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
           <span>debit</span>
           <span>amount</span>
         </div>
-        {journal.transfers.map((transfer, index) => (
+        {transfers.map((transfer, index) => (
           <div
             aria-label={index.toString()}
             key={index}
@@ -105,7 +103,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
             <input
               aria-label={'credit'}
               onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
+                operations.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   credit: e.target.value,
                 }))
@@ -115,7 +113,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
             <input
               aria-label={'debit'}
               onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
+                operations.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   debit: e.target.value,
                 }))
@@ -125,7 +123,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
             <input
               aria-label={'amount'}
               onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
+                operations.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   amount: e.target.value,
                 }))
@@ -134,7 +132,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
             />
             <button
               aria-label={'delete'}
-              onClick={() => journal.deleteTransfer(index)}
+              onClick={() => operations.deleteTransfer(index)}
             >
               &times;
             </button>
@@ -142,17 +140,17 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
         ))}
       </div>
       <p>
-        <button onClick={() => journal.addTransfer()}>add transfer</button>
+        <button onClick={() => operations.addTransfer()}>add transfer</button>
       </p>
     </>
   )
 }
 
-function Summary({ journal }: { journal: ReturnType<typeof useJournal> }) {
+function Summary({ transfers }: { transfers: Transfer[] }) {
   const status = useStatus()
   const summary = useMemo(() => {
     try {
-      const summary = journal.transfers.reduce((accounts, transfer) => {
+      const summary = transfers.reduce((accounts, transfer) => {
         const amount = Amount.parse(transfer.amount)
         const credit = accounts.get(transfer.credit)
         const debit = accounts.get(transfer.debit)
@@ -169,7 +167,7 @@ function Summary({ journal }: { journal: ReturnType<typeof useJournal> }) {
       status.error('failed to summarize journal', cause)
       return new Map()
     }
-  }, [journal.transfers])
+  }, [transfers])
 
   return (
     <>
