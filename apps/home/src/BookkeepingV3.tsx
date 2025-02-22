@@ -39,6 +39,12 @@ class Journal {
     )
   }
 
+  deleteTransfer(deleteIndex: number) {
+    this.setTransfers((transfers) =>
+      transfers.filter((_, index) => index !== deleteIndex),
+    )
+  }
+
   updateTransfer(index: number, block: (transfer: Transfer) => Transfer) {
     this.setTransfers((transfers) =>
       transfers.map((transfer, k) =>
@@ -55,7 +61,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
         className={'grid'}
         style={{
           display: 'inline-grid',
-          gridTemplateColumns: 'repeat(6, auto)',
+          gridTemplateColumns: 'repeat(7, auto)',
           gridGap: '1px',
           fontFamily: 'monospace',
         }}
@@ -77,7 +83,7 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
         </div>
         {journal.transfers.map((transfer, index) => (
           <div
-            aria-label={index}
+            aria-label={index.toString()}
             key={index}
             style={{
               gridColumn: '1/-1',
@@ -126,6 +132,12 @@ function Editor({ journal }: { journal: ReturnType<typeof useJournal> }) {
               }
               value={transfer.amount}
             />
+            <button
+              aria-label={'delete'}
+              onClick={() => journal.deleteTransfer(index)}
+            >
+              &times;
+            </button>
           </div>
         ))}
       </div>
