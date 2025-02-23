@@ -1,25 +1,131 @@
-import { SetStateAction, useMemo } from 'react'
-import { MarginAround } from './MarginAround'
-import { Amount } from './Amount'
-import { useStatus } from './bookkeeping_v2/useStatus'
+import { SetStateAction, useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Dexie, { EntityTable } from 'dexie'
 
-export function BookkeepingV3() {
-  const transfers =
-    useLiveQuery(async () => {
-      const journal = await database.journals.get('default')
-      return journal?.transfers || []
-    }) || []
+import { MarginAround } from './MarginAround'
+import { Amount } from './Amount'
+import { useStatus } from './bookkeeping_v2/useStatus'
 
+export function BookkeepingV3() {
   return (
     <MarginAround>
       <h2>Bookkeeping v3</h2>
       <p>Welcome to v3</p>
-      <Editor transfers={transfers} />
-      <Summary transfers={transfers} />
+      <LedgerEditor />
     </MarginAround>
   )
+}
+
+function LedgerEditor() {
+  const journals = useJournals()
+
+  const journal = useLiveQuery(async () => {
+    const result = await database.journals.get(journals.selected)
+    const transfers = result?.transfers || []
+    return new Journal(journals.selected, transfers)
+  }, [journals.selected])
+
+  return (
+    <>
+      <select
+        aria-label={'select journal'}
+        onChange={(e) => journals.select(e.target.value)}
+        value={journal?.key}
+      >
+        {journals.keys?.map((key) => <option key={key}>{key}</option>)}
+      </select>
+      <button
+        aria-label={'create journal'}
+        onClick={async () => {
+          const key = await journals.create()
+          journals.select(key)
+        }}
+      >
+        +
+      </button>
+      {journal && (
+        <>
+          <JournalEditor journal={journal} />
+          <JournalSummary journal={journal} />
+        </>
+      )}
+    </>
+  )
+}
+
+function useJournals() {
+  const keys = useLiveQuery(async () => {
+    const keys = []
+    for (const key of await database.journals.toCollection().keys()) {
+      if (typeof key !== 'string') {
+        throw Error(`expected key of type string got '${key}'`)
+      }
+      keys.push(key)
+    }
+    return keys
+  }, [])
+
+  async function create() {
+    if (!keys) {
+      throw Error('journal keys are not loaded')
+    }
+    let index = 1
+    if (keys.indexOf('new journal') > -1) {
+      for (index += 1; keys.indexOf(`new journal (${index})`) > -1; index++) {}
+    }
+    const key = 'new journal' + (index === 1 ? '' : ` (${index})`)
+    await database.journals.put({ key, transfers: [] })
+    return key
+  }
+
+  const [selected, select] = useState('default')
+
+  return { create, keys, select, selected }
+}
+
+class Journal {
+  constructor(
+    public key: string,
+    public transfers: Transfer[],
+  ) {}
+
+  private setTransfers(updateOrBlock: SetStateAction<Transfer[]>) {
+    const update =
+      typeof updateOrBlock === 'function'
+        ? updateOrBlock(this.transfers)
+        : updateOrBlock
+    return database.journals.put({ key: this.key, transfers: update })
+  }
+
+  addTransfer() {
+    this.setTransfers((transfers) =>
+      transfers.concat([
+        { date: '', memo: '', credit: '', debit: '', amount: '' },
+      ]),
+    )
+  }
+
+  deleteTransfer(deleteIndex: number) {
+    this.setTransfers((transfers) =>
+      transfers.filter((_, index) => index !== deleteIndex),
+    )
+  }
+
+  updateTransfer(index: number, block: (transfer: Transfer) => Transfer) {
+    this.setTransfers((transfers) =>
+      transfers.map((transfer, k) =>
+        k === index ? block(transfer) : transfer,
+      ),
+    )
+  }
+}
+
+type Transfer = {
+  date: string
+  memo: string
+  credit: string
+  debit: string
+  amount: string
 }
 
 const database = new Dexie('cruftbusters.com/bookkeeping_v3') as Dexie & {
@@ -30,18 +136,7 @@ database.version(1).stores({
   journals: 'key',
 })
 
-type Journal = { key: string; transfers: Transfer[] }
-
-type Transfer = {
-  date: string
-  memo: string
-  credit: string
-  debit: string
-  amount: string
-}
-
-function Editor({ transfers }: { transfers: Transfer[] }) {
-  const operations = new JournalOperations(transfers)
+function JournalEditor({ journal }: { journal: Journal }) {
   return (
     <>
       <div
@@ -68,7 +163,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
           <span>debit</span>
           <span>amount</span>
         </div>
-        {transfers.map((transfer, index) => (
+        {journal.transfers.map((transfer, index) => (
           <div
             aria-label={index.toString()}
             key={index}
@@ -90,7 +185,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
             <input
               aria-label={'date'}
               onChange={(e) =>
-                operations.updateTransfer(index, (transfer) => ({
+                journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   date: e.target.value,
                 }))
@@ -100,7 +195,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
             <input
               aria-label={'memo'}
               onChange={(e) =>
-                operations.updateTransfer(index, (transfer) => ({
+                journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   memo: e.target.value,
                 }))
@@ -110,7 +205,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
             <input
               aria-label={'credit'}
               onChange={(e) =>
-                operations.updateTransfer(index, (transfer) => ({
+                journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   credit: e.target.value,
                 }))
@@ -120,7 +215,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
             <input
               aria-label={'debit'}
               onChange={(e) =>
-                operations.updateTransfer(index, (transfer) => ({
+                journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   debit: e.target.value,
                 }))
@@ -130,7 +225,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
             <input
               aria-label={'amount'}
               onChange={(e) =>
-                operations.updateTransfer(index, (transfer) => ({
+                journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
                   amount: e.target.value,
                 }))
@@ -139,7 +234,7 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
             />
             <button
               aria-label={'delete'}
-              onClick={() => operations.deleteTransfer(index)}
+              onClick={() => journal.deleteTransfer(index)}
               style={{ borderRadius: 0, backgroundColor: 'rgb(43, 42, 51)' }}
             >
               &times;
@@ -148,51 +243,17 @@ function Editor({ transfers }: { transfers: Transfer[] }) {
         ))}
       </div>
       <p>
-        <button onClick={() => operations.addTransfer()}>add transfer</button>
+        <button onClick={() => journal.addTransfer()}>add transfer</button>
       </p>
     </>
   )
 }
 
-class JournalOperations {
-  constructor(private transfers: Transfer[]) {}
-
-  private setTransfers(updateOrBlock: SetStateAction<Transfer[]>) {
-    const update =
-      typeof updateOrBlock === 'function'
-        ? updateOrBlock(this.transfers)
-        : updateOrBlock
-    return database.journals.put({ key: 'default', transfers: update })
-  }
-
-  addTransfer() {
-    this.setTransfers((transfers) =>
-      transfers.concat([
-        { date: '', memo: '', credit: '', debit: '', amount: '' },
-      ]),
-    )
-  }
-
-  deleteTransfer(deleteIndex: number) {
-    this.setTransfers((transfers) =>
-      transfers.filter((_, index) => index !== deleteIndex),
-    )
-  }
-
-  updateTransfer(index: number, block: (transfer: Transfer) => Transfer) {
-    this.setTransfers((transfers) =>
-      transfers.map((transfer, k) =>
-        k === index ? block(transfer) : transfer,
-      ),
-    )
-  }
-}
-
-function Summary({ transfers }: { transfers: Transfer[] }) {
+function JournalSummary({ journal }: { journal: Journal }) {
   const status = useStatus()
   const summary = useMemo(() => {
     try {
-      const summary = transfers.reduce((accounts, transfer) => {
+      const summary = journal.transfers.reduce((accounts, transfer) => {
         const amount = Amount.parse(transfer.amount)
         const credit = accounts.get(transfer.credit)
         const debit = accounts.get(transfer.debit)
@@ -209,7 +270,7 @@ function Summary({ transfers }: { transfers: Transfer[] }) {
       status.error('failed to summarize journal', cause)
       return new Map()
     }
-  }, [status, transfers])
+  }, [status, journal.transfers])
 
   return (
     <>
