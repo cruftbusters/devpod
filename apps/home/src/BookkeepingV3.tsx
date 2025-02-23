@@ -27,22 +27,26 @@ function LedgerEditor() {
 
   return (
     <>
-      <select
-        aria-label={'select journal'}
-        onChange={(e) => journals.select(e.target.value)}
-        value={journal?.key}
-      >
-        {journals.keys?.map((key) => <option key={key}>{key}</option>)}
-      </select>
-      <button
-        aria-label={'create journal'}
-        onClick={async () => {
-          const key = await journals.create()
-          journals.select(key)
-        }}
-      >
-        +
-      </button>
+      <p>
+        <label>
+          {' select journal: '}
+          <select
+            onChange={(e) => journals.select(e.target.value)}
+            value={journal?.key}
+          >
+            {journals.keys?.map((key) => <option key={key}>{key}</option>)}
+          </select>
+        </label>
+        <button
+          aria-label={'create journal'}
+          onClick={async () => {
+            const key = await journals.create()
+            journals.select(key)
+          }}
+        >
+          +
+        </button>
+      </p>
       {journal && (
         <>
           <JournalEditor journal={journal} />
