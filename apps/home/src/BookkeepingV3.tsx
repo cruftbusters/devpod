@@ -60,40 +60,35 @@ function JournalList({
   onSelect: (key: string) => void
 }) {
   return (
-    <>
-      <p>
-        <label>
-          {' select journal: '}
-          <select
-            onChange={(e) => onSelect(e.target.value)}
-            value={journal?.key}
-          >
-            {keys.map((key) => (
-              <option key={key}>{key}</option>
-            ))}
-          </select>
-        </label>
-        <button
-          aria-label={'create journal'}
-          onClick={async () => {
-            let index = 1
-            if (keys.indexOf('new journal') > -1) {
-              for (
-                index += 1;
-                keys.indexOf(`new journal (${index})`) > -1;
-                index++
-              ) {}
-            }
-            const suffix = index === 1 ? '' : ` (${index})`
-            const key = 'new journal' + suffix
-            await database.journals.put({ key, transfers: [] })
-            onSelect(key)
-          }}
-        >
-          +
-        </button>
-      </p>
-    </>
+    <p>
+      <label>
+        {' select journal: '}
+        <select onChange={(e) => onSelect(e.target.value)} value={journal?.key}>
+          {keys.map((key) => (
+            <option key={key}>{key}</option>
+          ))}
+        </select>
+      </label>
+      <button
+        aria-label={'create journal'}
+        onClick={async () => {
+          let index = 1
+          if (keys.indexOf('new journal') > -1) {
+            for (
+              index += 1;
+              keys.indexOf(`new journal (${index})`) > -1;
+              index++
+            ) {}
+          }
+          const suffix = index === 1 ? '' : ` (${index})`
+          const key = 'new journal' + suffix
+          await database.journals.put({ key, transfers: [] })
+          onSelect(key)
+        }}
+      >
+        +
+      </button>
+    </p>
   )
 }
 
