@@ -7,6 +7,8 @@ import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
 
 export function BookkeepingV3() {
+  const [key, setKey] = useState('')
+
   const keys = useLiveQuery(async () => {
     const result: string[] = []
     for (const key of await database.journals.toCollection().keys()) {
@@ -18,54 +20,43 @@ export function BookkeepingV3() {
     return result
   }, [])
 
-  const [key, setKey] = useState('default')
-
-  const journal = useLiveQuery(async () => {
-    const result = await database.journals.get(key)
-    const transfers = result?.transfers || []
-    return new Journal(key, transfers)
-  }, [key])
-
   return (
     <MarginAround>
       <h2>Bookkeeping v3</h2>
-      {journal ? (
-        <>
-          {keys ? (
-            <JournalList
-              journal={journal}
-              keys={keys}
-              onSelect={(key) => setKey(key)}
-            />
-          ) : (
-            <p>loading metadata</p>
-          )}
-          <JournalEditor journal={journal} />
-          <JournalSummary journal={journal} />
-        </>
-      ) : (
-        <p>loading journal</p>
+      {keys && (
+        <JournalList
+          journalKey={key}
+          journalKeys={keys}
+          onJournalKeyChange={(key) => setKey(key)}
+        />
       )}
+      <JournalView journalKey={key} />
     </MarginAround>
   )
 }
 
 function JournalList({
-  journal,
-  keys,
-  onSelect,
+  journalKey,
+  journalKeys,
+  onJournalKeyChange,
 }: {
-  journal: Journal
-  keys: string[]
-  onSelect: (key: string) => void
+  journalKey: string
+  journalKeys: string[]
+  onJournalKeyChange: (key: string) => void
 }) {
   return (
     <p>
       <label>
         {' select journal: '}
-        <select onChange={(e) => onSelect(e.target.value)} value={journal.key}>
-          {keys.map((key) => (
-            <option key={key}>{key}</option>
+        <select
+          onChange={(e) => onJournalKeyChange(e.target.value)}
+          value={journalKey}
+        >
+          {journalKey === '' && <option value={''} />}
+          {journalKeys.map((key) => (
+            <option key={key} value={key}>
+              {key}
+            </option>
           ))}
         </select>
       </label>
@@ -73,10 +64,10 @@ function JournalList({
         aria-label={'create journal'}
         onClick={async () => {
           let index = 1
-          if (keys.indexOf('new journal') > -1) {
+          if (journalKeys.indexOf('new journal') > -1) {
             for (
               index += 1;
-              keys.indexOf(`new journal (${index})`) > -1;
+              journalKeys.indexOf(`new journal (${index})`) > -1;
               index++
             ) {
               /* eslint-disable-no-empty */
@@ -85,12 +76,45 @@ function JournalList({
           const suffix = index === 1 ? '' : ` (${index})`
           const key = 'new journal' + suffix
           await database.journals.put({ key, transfers: [] })
-          onSelect(key)
+          onJournalKeyChange(key)
         }}
       >
         +
       </button>
     </p>
+  )
+}
+
+function JournalView({ journalKey }: { journalKey?: string }) {
+  const status = useStatus()
+
+  const journal = useLiveQuery(async () => {
+    if (journalKey !== undefined) {
+      try {
+        status.info('loading journal')
+        const result = await database.journals.get(journalKey)
+        if (result === undefined) {
+          status.info('ready to load journal')
+        } else {
+          status.info('loaded journal')
+          return new Journal(journalKey, result.transfers || [])
+        }
+      } catch (cause) {
+        status.error('failed to load journal', cause)
+      }
+    }
+  }, [journalKey])
+
+  return (
+    <>
+      <p>{status.message}</p>
+      {journal !== undefined && (
+        <>
+          <JournalEditor journal={journal} />
+          <JournalSummary journal={journal} />
+        </>
+      )}
+    </>
   )
 }
 

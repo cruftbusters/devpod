@@ -1,64 +1,45 @@
 import { test, expect } from '@playwright/test'
 
-test('persist through reload', async ({ page }) => {
+test('persist multiple journals', async ({ page }) => {
   await page.goto('http://localhost:5173/bookkeeping')
-  await page.getByRole('button', { name: 'add transfer' }).click()
-
-  const row0 = page.getByLabel('0')
-  await row0.getByLabel('date').fill('2025-01-01')
-  await row0.getByLabel('memo').fill('first transfer of the year!!!')
-  await row0.getByLabel('credit').fill('equity:capital contribution')
-  await row0.getByLabel('debit').fill('expense:insurance')
-  await row0.getByLabel('amount').fill(' $ 300.00 ')
-
-  await page.reload()
-
-  await expect(row0.getByLabel('date')).toHaveValue('2025-01-01')
-  await expect(row0.getByLabel('memo')).toHaveValue(
-    'first transfer of the year!!!',
-  )
-  await expect(row0.getByLabel('credit')).toHaveValue(
-    'equity:capital contribution',
-  )
-  await expect(row0.getByLabel('debit')).toHaveValue('expense:insurance')
-  await expect(row0.getByLabel('amount')).toHaveValue(' $ 300.00 ')
-})
-
-test('change between journals', async ({ page }) => {
-  await page.goto('http://localhost:5173/bookkeeping')
+  const createJournalButton = page.getByRole('button', {
+    name: 'create journal',
+  })
   const addTransferButton = page.getByRole('button', { name: 'add transfer' })
   const row0 = page.getByLabel('0')
 
+  await createJournalButton.click()
   await addTransferButton.click()
-
   await row0.getByLabel('date').fill('2025-01-01')
 
-  await page.getByRole('button', { name: 'create journal' }).click()
-
+  await createJournalButton.click()
   await addTransferButton.click()
-
   await row0.getByLabel('date').fill('2025-01-02')
 
-  await page.getByRole('button', { name: 'create journal' }).click()
-
+  await createJournalButton.click()
   await addTransferButton.click()
-
   await row0.getByLabel('date').fill('2025-01-03')
 
-  await page.getByLabel('select journal').selectOption('default')
-  await expect(row0.getByLabel('date')).toHaveValue('2025-01-01')
+  await page.reload()
 
   await page.getByLabel('select journal').selectOption('new journal')
-  await expect(row0.getByLabel('date')).toHaveValue('2025-01-02')
+  await expect(row0.getByLabel('date')).toHaveValue('2025-01-01')
 
   await page.getByLabel('select journal').selectOption('new journal (2)')
+  await expect(row0.getByLabel('date')).toHaveValue('2025-01-02')
+
+  await page.getByLabel('select journal').selectOption('new journal (3)')
   await expect(row0.getByLabel('date')).toHaveValue('2025-01-03')
 })
 
 test('create update delete transfer and summary', async ({ page }) => {
   await page.goto('http://localhost:5173/bookkeeping')
+  const createJournalButton = page.getByRole('button', {
+    name: 'create journal',
+  })
   const addTransferButton = page.getByRole('button', { name: 'add transfer' })
 
+  await createJournalButton.click()
   await addTransferButton.click()
   const row0 = page.getByLabel('0')
   await row0.getByLabel('date').fill('2025-01-01')
