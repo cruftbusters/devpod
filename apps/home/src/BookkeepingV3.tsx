@@ -78,7 +78,9 @@ function JournalList({
               index += 1;
               keys.indexOf(`new journal (${index})`) > -1;
               index++
-            ) {}
+            ) {
+              /* eslint-disable-no-empty */
+            }
           }
           const suffix = index === 1 ? '' : ` (${index})`
           const key = 'new journal' + suffix
