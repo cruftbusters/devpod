@@ -7,16 +7,6 @@ import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
 
 export function BookkeepingV3() {
-  return (
-    <MarginAround>
-      <h2>Bookkeeping v3</h2>
-      <p>Welcome to v3</p>
-      <LedgerEditor />
-    </MarginAround>
-  )
-}
-
-function LedgerEditor() {
   const journals = useJournals()
 
   const journal = useLiveQuery(async () => {
@@ -26,34 +16,18 @@ function LedgerEditor() {
   }, [journals.selected])
 
   return (
-    <>
-      <p>
-        <label>
-          {' select journal: '}
-          <select
-            onChange={(e) => journals.select(e.target.value)}
-            value={journal?.key}
-          >
-            {journals.keys?.map((key) => <option key={key}>{key}</option>)}
-          </select>
-        </label>
-        <button
-          aria-label={'create journal'}
-          onClick={async () => {
-            const key = await journals.create()
-            journals.select(key)
-          }}
-        >
-          +
-        </button>
-      </p>
-      {journal && (
+    <MarginAround>
+      <h2>Bookkeeping v3</h2>
+      {journal ? (
         <>
+          <JournalList journal={journal} journals={journals} />
           <JournalEditor journal={journal} />
           <JournalSummary journal={journal} />
         </>
+      ) : (
+        'loading journal'
       )}
-    </>
+    </MarginAround>
   )
 }
 
@@ -85,6 +59,39 @@ function useJournals() {
   const [selected, select] = useState('default')
 
   return { create, keys, select, selected }
+}
+
+function JournalList({
+  journal,
+  journals,
+}: {
+  journal: Journal
+  journals: ReturnType<typeof useJournals>
+}) {
+  return (
+    <>
+      <p>
+        <label>
+          {' select journal: '}
+          <select
+            onChange={(e) => journals.select(e.target.value)}
+            value={journal?.key}
+          >
+            {journals.keys?.map((key) => <option key={key}>{key}</option>)}
+          </select>
+        </label>
+        <button
+          aria-label={'create journal'}
+          onClick={async () => {
+            const key = await journals.create()
+            journals.select(key)
+          }}
+        >
+          +
+        </button>
+      </p>
+    </>
+  )
 }
 
 class Journal {
