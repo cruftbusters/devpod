@@ -63,7 +63,7 @@ function JournalList({
     <p>
       <label>
         {' select journal: '}
-        <select onChange={(e) => onSelect(e.target.value)} value={journal?.key}>
+        <select onChange={(e) => onSelect(e.target.value)} value={journal.key}>
           {keys.map((key) => (
             <option key={key}>{key}</option>
           ))}
@@ -96,6 +96,7 @@ class Journal {
   constructor(
     public key: string,
     public transfers: Transfer[],
+    private table = database.journals,
   ) {}
 
   private setTransfers(updateOrBlock: SetStateAction<Transfer[]>) {
@@ -103,7 +104,7 @@ class Journal {
       typeof updateOrBlock === 'function'
         ? updateOrBlock(this.transfers)
         : updateOrBlock
-    return database.journals.put({ key: this.key, transfers: update })
+    return this.table.put({ key: this.key, transfers: update })
   }
 
   addTransfer() {
