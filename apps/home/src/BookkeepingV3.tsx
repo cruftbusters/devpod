@@ -7,66 +7,57 @@ import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
 
 export function BookkeepingV3() {
-  const journals = useJournals()
+  const keys = useLiveQuery(async () => {
+    const result: string[] = []
+    for (const key of await database.journals.toCollection().keys()) {
+      if (typeof key !== 'string') {
+        throw Error(`expected key of type string got '${key}'`)
+      }
+      result.push(key)
+    }
+    return result
+  }, [])
+
+  const [key, setKey] = useState('default')
 
   const journal = useLiveQuery(async () => {
-    const result = await database.journals.get(journals.selected)
+    const result = await database.journals.get(key)
     const transfers = result?.transfers || []
-    return new Journal(journals.selected, transfers)
-  }, [journals.selected])
+    return new Journal(key, transfers)
+  }, [key])
 
   return (
     <MarginAround>
       <h2>Bookkeeping v3</h2>
       {journal ? (
         <>
-          <JournalList journal={journal} journals={journals} />
+          {keys ? (
+            <JournalList
+              journal={journal}
+              keys={keys}
+              onSelect={(key) => setKey(key)}
+            />
+          ) : (
+            <p>loading metadata</p>
+          )}
           <JournalEditor journal={journal} />
           <JournalSummary journal={journal} />
         </>
       ) : (
-        'loading journal'
+        <p>loading journal</p>
       )}
     </MarginAround>
   )
 }
 
-function useJournals() {
-  const keys = useLiveQuery(async () => {
-    const keys = []
-    for (const key of await database.journals.toCollection().keys()) {
-      if (typeof key !== 'string') {
-        throw Error(`expected key of type string got '${key}'`)
-      }
-      keys.push(key)
-    }
-    return keys
-  }, [])
-
-  async function create() {
-    if (!keys) {
-      throw Error('journal keys are not loaded')
-    }
-    let index = 1
-    if (keys.indexOf('new journal') > -1) {
-      for (index += 1; keys.indexOf(`new journal (${index})`) > -1; index++) {}
-    }
-    const key = 'new journal' + (index === 1 ? '' : ` (${index})`)
-    await database.journals.put({ key, transfers: [] })
-    return key
-  }
-
-  const [selected, select] = useState('default')
-
-  return { create, keys, select, selected }
-}
-
 function JournalList({
   journal,
-  journals,
+  keys,
+  onSelect,
 }: {
   journal: Journal
-  journals: ReturnType<typeof useJournals>
+  keys: string[]
+  onSelect: (key: string) => void
 }) {
   return (
     <>
@@ -74,17 +65,29 @@ function JournalList({
         <label>
           {' select journal: '}
           <select
-            onChange={(e) => journals.select(e.target.value)}
+            onChange={(e) => onSelect(e.target.value)}
             value={journal?.key}
           >
-            {journals.keys?.map((key) => <option key={key}>{key}</option>)}
+            {keys.map((key) => (
+              <option key={key}>{key}</option>
+            ))}
           </select>
         </label>
         <button
           aria-label={'create journal'}
           onClick={async () => {
-            const key = await journals.create()
-            journals.select(key)
+            let index = 1
+            if (keys.indexOf('new journal') > -1) {
+              for (
+                index += 1;
+                keys.indexOf(`new journal (${index})`) > -1;
+                index++
+              ) {}
+            }
+            const suffix = index === 1 ? '' : ` (${index})`
+            const key = 'new journal' + suffix
+            await database.journals.put({ key, transfers: [] })
+            onSelect(key)
           }}
         >
           +
