@@ -5,6 +5,7 @@ import Dexie, { EntityTable } from 'dexie'
 import { MarginAround } from './MarginAround'
 import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
+import { Listicle } from './Listicle'
 
 export function BookkeepingV3() {
   const [key, setKey] = useState('')
@@ -111,6 +112,7 @@ function JournalView({ journalKey }: { journalKey?: string }) {
       {journal !== undefined && (
         <>
           <JournalEditor journal={journal} />
+          <JournalImportExport journal={journal} />
           <JournalSummary journal={journal} />
         </>
       )}
@@ -125,7 +127,7 @@ class Journal {
     private table = database.journals,
   ) {}
 
-  private setTransfers(updateOrBlock: SetStateAction<Transfer[]>) {
+  setTransfers(updateOrBlock: SetStateAction<Transfer[]>) {
     const update =
       typeof updateOrBlock === 'function'
         ? updateOrBlock(this.transfers)
@@ -153,6 +155,41 @@ class Journal {
         k === index ? block(transfer) : transfer,
       ),
     )
+  }
+
+  static fields = ['date', 'memo', 'credit', 'debit', 'amount']
+
+  import(text: string, fields = Journal.fields) {
+    const rows = text.split('\n').map((line) => line.split('\t'))
+    const header = rows.shift() || ['']
+
+    if (header.length !== fields.length) {
+      throw Error(`expected '${fields}' got '${header}'`)
+    }
+
+    for (let index = 0; index > header.length; index++) {
+      if (header[index] !== fields[index]) {
+        throw Error(`expected '${fields}' got '${header}'`)
+      }
+    }
+
+    const transfers = rows.map((row) =>
+      row.reduce((transfer, value, index) => {
+        ;(transfer as Record<string, string>)[fields[index]] = value
+        return transfer
+      }, {} as Transfer),
+    )
+
+    this.setTransfers(transfers)
+  }
+
+  export(fields = Journal.fields) {
+    const rows = [fields].concat(
+      this.transfers.map((transfer: Record<string, string>) =>
+        fields.map((field) => transfer[field]),
+      ),
+    )
+    return rows.map((row) => row.join('\t')).join('\n')
   }
 }
 
@@ -218,7 +255,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             >
               {index}
             </div>
-            {['date', 'memo', 'credit', 'debit', 'amount'].map((field) => (
+            {Journal.fields.map((field) => (
               <input
                 aria-label={field}
                 className="grid-cell"
@@ -245,6 +282,33 @@ function JournalEditor({ journal }: { journal: Journal }) {
       </div>
       <p>
         <button onClick={() => journal.addTransfer()}>add transfer</button>
+      </p>
+    </>
+  )
+}
+
+function JournalImportExport({ journal }: { journal: Journal }) {
+  const [text, setText] = useState('')
+
+  return (
+    <>
+      <p>
+        <textarea
+          aria-label="journal import and export tsv"
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+          style={{ gridColumn: '1/-1', resize: 'vertical' }}
+        />
+      </p>
+      <p>
+        <Listicle>
+          <button onClick={() => setText(journal.export(Journal.fields))}>
+            export
+          </button>
+          <button onClick={() => journal.import(text, Journal.fields)}>
+            import
+          </button>
+        </Listicle>
       </p>
     </>
   )
