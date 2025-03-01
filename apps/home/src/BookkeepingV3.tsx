@@ -210,8 +210,8 @@ function JournalEditor({ journal }: { journal: Journal }) {
             }}
           >
             <div
+              className="grid-cell"
               style={{
-                backgroundColor: 'rgb(43, 42, 51)',
                 padding: '0.25em 0.5em',
                 textAlign: 'right',
               }}
@@ -220,6 +220,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             </div>
             <input
               aria-label={'date'}
+              className="grid-cell"
               onChange={(e) =>
                 journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
@@ -230,6 +231,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             />
             <input
               aria-label={'memo'}
+              className="grid-cell"
               onChange={(e) =>
                 journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
@@ -240,6 +242,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             />
             <input
               aria-label={'credit'}
+              className="grid-cell"
               onChange={(e) =>
                 journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
@@ -250,6 +253,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             />
             <input
               aria-label={'debit'}
+              className="grid-cell"
               onChange={(e) =>
                 journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
@@ -260,6 +264,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             />
             <input
               aria-label={'amount'}
+              className="grid-cell"
               onChange={(e) =>
                 journal.updateTransfer(index, (transfer) => ({
                   ...transfer,
@@ -270,8 +275,9 @@ function JournalEditor({ journal }: { journal: Journal }) {
             />
             <button
               aria-label={'delete'}
+              className="grid-cell"
               onClick={() => journal.deleteTransfer(index)}
-              style={{ borderRadius: 0, backgroundColor: 'rgb(43, 42, 51)' }}
+              style={{ borderRadius: 0 }}
             >
               &times;
             </button>

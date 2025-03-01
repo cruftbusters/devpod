@@ -55,6 +55,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.grid-cell {
+  background-color: rgb(43, 42, 51);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -64,6 +68,9 @@ button:focus-visible {
     color: #747bff;
   }
   button {
+    background-color: #f9f9f9;
+  }
+  .grid-cell {
     background-color: #f9f9f9;
   }
 }
