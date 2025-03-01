@@ -218,61 +218,20 @@ function JournalEditor({ journal }: { journal: Journal }) {
             >
               {index}
             </div>
-            <input
-              aria-label={'date'}
-              className="grid-cell"
-              onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  date: e.target.value,
-                }))
-              }
-              value={transfer.date}
-            />
-            <input
-              aria-label={'memo'}
-              className="grid-cell"
-              onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  memo: e.target.value,
-                }))
-              }
-              value={transfer.memo}
-            />
-            <input
-              aria-label={'credit'}
-              className="grid-cell"
-              onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  credit: e.target.value,
-                }))
-              }
-              value={transfer.credit}
-            />
-            <input
-              aria-label={'debit'}
-              className="grid-cell"
-              onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  debit: e.target.value,
-                }))
-              }
-              value={transfer.debit}
-            />
-            <input
-              aria-label={'amount'}
-              className="grid-cell"
-              onChange={(e) =>
-                journal.updateTransfer(index, (transfer) => ({
-                  ...transfer,
-                  amount: e.target.value,
-                }))
-              }
-              value={transfer.amount}
-            />
+            {['date', 'memo', 'credit', 'debit', 'amount'].map((field) => (
+              <input
+                aria-label={field}
+                className="grid-cell"
+                key={field}
+                onChange={(e) =>
+                  journal.updateTransfer(index, (transfer) => ({
+                    ...transfer,
+                    [field]: e.target.value,
+                  }))
+                }
+                value={(transfer as Record<string, string>)[field]}
+              />
+            ))}
             <button
               aria-label={'delete'}
               className="grid-cell"
