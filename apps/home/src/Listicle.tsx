@@ -2,10 +2,10 @@ import { PropsWithChildren } from 'react'
 
 export function Listicle({ children }: PropsWithChildren) {
   return (
-    <div
+    <span
       style={{ display: 'inline-grid', gridAutoFlow: 'column', gridGap: '1em' }}
     >
       {children}
-    </div>
+    </span>
   )
 }
