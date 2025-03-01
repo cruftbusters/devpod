@@ -229,24 +229,14 @@ function JournalSummary({ journal }: { journal: Journal }) {
   const status = useStatus()
   const summary = useMemo(() => {
     try {
-      const summary = journal.transfers.reduce((accounts, transfer) => {
-        const amount = Amount.parse(transfer.amount)
-        const credit = accounts.get(transfer.credit)
-        const debit = accounts.get(transfer.debit)
-        return accounts
-          .set(
-            transfer.credit,
-            credit ? credit.plus(amount.negate()) : amount.negate(),
-          )
-          .set(transfer.debit, debit ? debit.plus(amount) : amount)
-      }, new Map<string, Amount>())
+      const summary = journal.summary()
       status.info('successfully summarized journal')
       return summary
     } catch (cause) {
       status.error('failed to summarize journal', cause)
       return new Map()
     }
-  }, [status, journal.transfers])
+  }, [status, journal])
 
   return (
     <>

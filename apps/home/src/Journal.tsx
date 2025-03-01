@@ -1,7 +1,10 @@
 import { SetStateAction } from 'react'
 import Dexie, { EntityTable } from 'dexie'
+import { Amount } from './Amount'
 
-export const database = new Dexie('cruftbusters.com/bookkeeping_v3') as Dexie & {
+export const database = new Dexie(
+  'cruftbusters.com/bookkeeping_v3',
+) as Dexie & {
   journals: EntityTable<Journal, 'key'>
 }
 
@@ -79,6 +82,20 @@ export class Journal {
       ),
     )
     return rows.map((row) => row.join('\t')).join('\n')
+  }
+
+  summary() {
+    return this.transfers.reduce((accounts, transfer) => {
+      const amount = Amount.parse(transfer.amount)
+      const credit = accounts.get(transfer.credit)
+      const debit = accounts.get(transfer.debit)
+      return accounts
+        .set(
+          transfer.credit,
+          credit ? credit.plus(amount.negate()) : amount.negate(),
+        )
+        .set(transfer.debit, debit ? debit.plus(amount) : amount)
+    }, new Map<string, Amount>())
   }
 }
 
