@@ -22,4 +22,13 @@ describe('import', () => {
     ])
     expect(transfers).toEqual([])
   })
+  test('default values', () => {
+    const transfers = TransferArraySheet.toArray([
+      ['date', 'memo', 'credit', 'debit', 'amount'],
+      [],
+    ])
+    expect(transfers).toEqual([
+      { date: '', memo: '', credit: '', debit: '', amount: '' },
+    ])
+  })
 })

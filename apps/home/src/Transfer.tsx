@@ -22,7 +22,7 @@ export class TransferArraySheet {
 
     return rows.map((row) =>
       fields.reduce((transfer, field, index) => {
-        ;(transfer as Record<string, string>)[field] = row[lookup[index]]
+        ;(transfer as Record<string, string>)[field] = row[lookup[index]] || ''
         return transfer
       }, {} as Transfer),
     )
