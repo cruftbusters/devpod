@@ -5,6 +5,8 @@ import { MarginAround } from './MarginAround'
 import { useStatus } from './bookkeeping_v2/useStatus'
 import { Listicle } from './Listicle'
 import { database, Journal } from './Journal'
+import { TransferArraySheet } from './Transfer'
+import { SheetSerde } from './SheetSerde'
 
 export function BookkeepingV3() {
   const [key, setKey] = useState('')
@@ -165,7 +167,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             >
               {index}
             </div>
-            {Journal.fields.map((field) => (
+            {Object.keys(transfer).map((field) => (
               <input
                 aria-label={field}
                 className="grid-cell"
@@ -198,6 +200,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
 }
 
 function JournalImportExport({ journal }: { journal: Journal }) {
+  const status = useStatus()
   const [text, setText] = useState('')
 
   return (
@@ -207,19 +210,42 @@ function JournalImportExport({ journal }: { journal: Journal }) {
           aria-label="journal import and export tsv"
           onChange={(e) => setText(e.target.value)}
           value={text}
-          style={{ gridColumn: '1/-1', resize: 'vertical' }}
+          style={{ gridColumn: '1/-1' }}
         />
       </p>
       <p>
         <Listicle>
-          <button onClick={() => setText(journal.export(Journal.fields))}>
+          <button
+            onClick={() => {
+              try {
+                const sheet = TransferArraySheet.toSheet(journal.transfers)
+                const text = SheetSerde.serialize(sheet)
+                setText(text)
+                status.clear()
+              } catch (cause) {
+                status.error('failed to serialize transfers', cause)
+              }
+            }}
+          >
             export
           </button>
-          <button onClick={() => journal.import(text, Journal.fields)}>
+          <button
+            onClick={() => {
+              try {
+                const sheet = SheetSerde.deserialize(text)
+                const transfers = TransferArraySheet.toArray(sheet)
+                journal.setTransfers(transfers)
+                status.clear()
+              } catch (cause) {
+                status.error('failed to deserialize transfers', cause)
+              }
+            }}
+          >
             import
           </button>
         </Listicle>
       </p>
+      <p>{status.message}</p>
     </>
   )
 }

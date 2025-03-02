@@ -1,6 +1,7 @@
 import { SetStateAction } from 'react'
 import Dexie, { EntityTable } from 'dexie'
 import { Amount } from './Amount'
+import { Transfer } from './Transfer'
 
 export const database = new Dexie(
   'cruftbusters.com/bookkeeping_v3',
@@ -49,41 +50,6 @@ export class Journal {
     )
   }
 
-  static fields = ['date', 'memo', 'credit', 'debit', 'amount']
-
-  import(text: string, fields = Journal.fields) {
-    const rows = text.split('\n').map((line) => line.split('\t'))
-    const header = rows.shift() || ['']
-
-    if (header.length !== fields.length) {
-      throw Error(`expected '${fields}' got '${header}'`)
-    }
-
-    for (let index = 0; index < header.length; index++) {
-      if (header[index] !== fields[index]) {
-        throw Error(`expected '${fields}' got '${header}'`)
-      }
-    }
-
-    const transfers = rows.map((row) =>
-      row.reduce((transfer, value, index) => {
-        ;(transfer as Record<string, string>)[fields[index]] = value
-        return transfer
-      }, {} as Transfer),
-    )
-
-    this.setTransfers(transfers)
-  }
-
-  export(fields = Journal.fields) {
-    const rows = [fields].concat(
-      this.transfers.map((transfer: Record<string, string>) =>
-        fields.map((field) => transfer[field]),
-      ),
-    )
-    return rows.map((row) => row.join('\t')).join('\n')
-  }
-
   summary() {
     return this.transfers.reduce((accounts, transfer) => {
       const amount = Amount.parse(transfer.amount)
@@ -97,12 +63,4 @@ export class Journal {
         .set(transfer.debit, debit ? debit.plus(amount) : amount)
     }, new Map<string, Amount>())
   }
-}
-
-export type Transfer = {
-  date: string
-  memo: string
-  credit: string
-  debit: string
-  amount: string
 }
