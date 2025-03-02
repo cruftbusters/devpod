@@ -243,6 +243,18 @@ function JournalImportExport({ journal }: { journal: Journal }) {
           >
             import
           </button>
+          <button
+            onClick={() =>
+              setText((text) => {
+                const lines = text.split('\n')
+                return [lines[0]].concat(
+                  lines.filter((_, index) => index > 0).reverse(),
+                ).join('\n')
+              })
+            }
+          >
+            reverse
+          </button>
         </Listicle>
       </p>
       <p>{status.message}</p>
