@@ -73,13 +73,18 @@ test('create update delete transfer and summary', async ({ page }) => {
   await row3.getByLabel('amount').fill(' $ 1,000.00 ')
   await row3.getByLabel('delete').click()
 
-  expect(page.getByText('equity:capital contribution')).toContainText(
+  const summary = page.getByLabel('summary')
+  expect(summary.getByLabel('equity:capital contribution')).toContainText(
     ' ( $ 300.00 ) ',
   )
-  expect(page.getByText('expense:insurance')).toContainText(' $ 300.00 ')
-  expect(page.getByText('income:via client')).toContainText(' ( $ 1,000.00 ) ')
-  expect(page.getByText('liability:client receivable')).toContainText(
+  expect(summary.getByLabel('expense:insurance')).toContainText(' $ 300.00 ')
+  expect(summary.getByLabel('income:via client')).toContainText(
+    ' ( $ 1,000.00 ) ',
+  )
+  expect(summary.getByLabel('liability:client receivable')).toContainText(
     ' $ 0.00 ',
   )
-  expect(page.getByText('asset:checking account')).toContainText(' $ 1,000.00 ')
+  expect(summary.getByLabel('asset:checking account')).toContainText(
+    ' $ 1,000.00 ',
+  )
 })

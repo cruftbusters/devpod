@@ -59,6 +59,10 @@ button:focus-visible {
   background-color: rgb(43, 42, 51);
 }
 
+.grid.alternating .grid-row:nth-child(even) {
+  background-color: rgb(43, 42, 51);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -73,9 +77,13 @@ button:focus-visible {
   .grid-cell {
     background-color: #f9f9f9;
   }
+  .grid.alternating .grid-row:nth-child(even) {
+    background-color: #ddd;
+  }
 }
 
 .grid input {
   border: none;
   outline: none;
 }
+

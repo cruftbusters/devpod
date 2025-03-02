@@ -63,4 +63,61 @@ export class Journal {
         .set(transfer.debit, debit ? debit.plus(amount) : amount)
     }, new Map<string, Amount>())
   }
+
+  periods(toPeriod: (date?: string) => string | undefined) {
+    const accounts: Set<string> = new Set()
+    const balance: Map<string, Amount> = new Map()
+
+    function accrue(account: string, amount: Amount) {
+      const items = []
+      for (const item of account.split(':')) {
+        items.push(item)
+        const account = items.join(':')
+        const entry = balance.get(account)
+        const update = entry ? entry.plus(amount) : amount
+        if (update.mantissa === 0) {
+          balance.delete(account)
+        } else {
+          balance.set(account, update)
+        }
+      }
+    }
+
+    let lastPeriod = ''
+    const periods = []
+    const snapshots: Map<string, Amount>[] = []
+
+    for (const transfer of this.transfers) {
+      const period: string = toPeriod(transfer.date) || lastPeriod
+      if (lastPeriod !== period) {
+        periods.push(lastPeriod)
+        snapshots.push(new Map(balance))
+        lastPeriod = period
+      }
+
+      const amount = Amount.parse(transfer.amount)
+
+      accrue(transfer.credit, amount.negate())
+      accrue(transfer.debit, amount)
+    }
+
+    periods.push(lastPeriod)
+    snapshots.push(balance)
+
+    for (const snapshot of snapshots) {
+      for (const account of snapshot.keys()) {
+        accounts.add(account)
+      }
+    }
+
+    return {
+      accounts: Array.from(accounts)
+        .sort()
+        .map((name) => ({
+          path: name.split(':'),
+          snapshots: snapshots.map((balance) => balance.get(name)),
+        })),
+      periods,
+    }
+  }
 }

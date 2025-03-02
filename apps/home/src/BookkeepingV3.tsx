@@ -266,12 +266,12 @@ function JournalSummary({ journal }: { journal: Journal }) {
   const status = useStatus()
   const summary = useMemo(() => {
     try {
-      const summary = journal.summary()
+      const summary = journal.periods((date) => date?.substring(0, 4))
       status.info('successfully summarized journal')
       return summary
     } catch (cause) {
       status.error('failed to summarize journal', cause)
-      return new Map()
+      return { accounts: [], periods: [] }
     }
   }, [status, journal])
 
@@ -279,11 +279,44 @@ function JournalSummary({ journal }: { journal: Journal }) {
     <>
       <h3>summary</h3>
       <p>{status.message}</p>
-      <div>
-        {Array.from(summary.entries()).map(([account, amount]) => (
-          <div key={account}>
-            {` ${account} `}
-            <span>{` ${amount.format()} `}</span>
+      <div
+        aria-label="summary"
+        className="grid alternating"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${1 + summary.periods.length}, auto)`,
+        }}
+      >
+        <div
+          className="grid-row"
+          style={{
+            display: 'grid',
+            gridColumn: '1/-1',
+            gridTemplateColumns: 'subgrid',
+          }}
+        >
+          <div>account</div>
+          {summary.periods.map((period) => (
+            <div key={period}>{period}</div>
+          ))}
+        </div>
+        {summary.accounts.map(({ path, snapshots }) => (
+          <div
+            aria-label={path.join(':')}
+            className="grid-row"
+            key={path.join(':')}
+            style={{
+              display: 'grid',
+              gridColumn: '1/-1',
+              gridTemplateColumns: 'subgrid',
+            }}
+          >
+            <div style={{ textIndent: `calc(${path.length - 1} * 1em)` }}>
+              {path[path.length - 1]}
+            </div>
+            {summary.periods.map((period, index) => (
+              <div key={period}>{snapshots[index]?.format()}</div>
+            ))}
           </div>
         ))}
       </div>
