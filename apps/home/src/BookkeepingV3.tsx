@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 
 import { MarginAround } from './MarginAround'
-import { Amount } from './Amount'
 import { useStatus } from './bookkeeping_v2/useStatus'
 import { Listicle } from './Listicle'
 import { database, Journal } from './Journal'

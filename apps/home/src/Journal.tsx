@@ -59,7 +59,7 @@ export class Journal {
       throw Error(`expected '${fields}' got '${header}'`)
     }
 
-    for (let index = 0; index > header.length; index++) {
+    for (let index = 0; index < header.length; index++) {
       if (header[index] !== fields[index]) {
         throw Error(`expected '${fields}' got '${header}'`)
       }
