@@ -9,6 +9,9 @@ export class Amount {
     const prefix = text.replace(/[0-9.\-(),\s]/g, '')
 
     const digitsAndDots = text.replace(/[^0-9.]/g, '')
+    if (digitsAndDots === '') {
+      return new Amount(prefix, 0, 2)
+    }
     const index = digitsAndDots.indexOf('.')
     const precision = index < 0 ? 0 : digitsAndDots.length - 1 - index
     const mantissa = parseInt(digitsAndDots.replace('.', ''))

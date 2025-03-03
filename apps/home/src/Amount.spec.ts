@@ -11,6 +11,7 @@ describe(Amount, () => {
 
       expect(Amount.parse(' $ 0 ')).toEqual(new Amount('$', 0, 0))
       expect(Amount.parse(' $ 0.0 ')).toEqual(new Amount('$', 0, 1))
+      expect(Amount.parse(' $ - ')).toEqual(new Amount('$', 0, 2))
     })
     test('negative one', () => {
       expect(Amount.parse('-1')).toEqual(new Amount('', -1, 0))
