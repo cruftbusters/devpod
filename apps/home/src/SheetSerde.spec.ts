@@ -26,3 +26,7 @@ test('tab in unquoted value', () => {
   const sheet = SheetSerde.deserialize('date,mem\to')
   expect(sheet).toMatchObject([['date', 'mem\to']])
 })
+test('quote in value', () => {
+  const sheet = SheetSerde.deserialize('a"')
+  expect(sheet).toMatchObject([['a"']])
+})

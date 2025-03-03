@@ -9,7 +9,10 @@ export class SheetSerde {
       if (c === '\n') {
         rows.push(buffer)
         buffer = ['']
-      } else if (c === '"') {
+      } else if (
+        c === '"' &&
+        (isQuoted || buffer[buffer.length - 1].length === 0)
+      ) {
         isQuoted = !isQuoted
       } else if (
         !isQuoted &&
