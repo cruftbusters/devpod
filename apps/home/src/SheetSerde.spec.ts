@@ -18,3 +18,11 @@ test('value contains comma', () => {
     ['', '', '', '', '$4,000.00'],
   ])
 })
+test('comma in unquoted value', () => {
+  const sheet = SheetSerde.deserialize('date\tmem,o')
+  expect(sheet).toMatchObject([['date', 'mem,o']])
+})
+test('tab in unquoted value', () => {
+  const sheet = SheetSerde.deserialize('date,mem\to')
+  expect(sheet).toMatchObject([['date', 'mem\to']])
+})

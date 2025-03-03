@@ -3,6 +3,7 @@ export class SheetSerde {
     const rows = []
     let buffer = ['']
     let isQuoted = false
+    let delimiter: string | undefined = undefined
 
     for (const c of text) {
       if (c === '\n') {
@@ -10,10 +11,17 @@ export class SheetSerde {
         buffer = ['']
       } else if (c === '"') {
         isQuoted = !isQuoted
-      } else if (isQuoted || ',\t'.indexOf(c) < 0) {
-        buffer[buffer.length - 1] += c
-      } else {
+      } else if (
+        !isQuoted &&
+        delimiter === undefined &&
+        ',\t'.indexOf(c) > -1
+      ) {
         buffer.push('')
+        delimiter = c
+      } else if (!isQuoted && delimiter === c) {
+        buffer.push('')
+      } else {
+        buffer[buffer.length - 1] += c
       }
     }
 
