@@ -266,7 +266,7 @@ function JournalSummary({ journal }: { journal: Journal }) {
   const status = useStatus()
   const summary = useMemo(() => {
     try {
-      const summary = journal.periods((date) => date?.substring(0, 4))
+      const summary = journal.summary((date) => date?.substring(0, 4))
       status.info('successfully summarized journal')
       return summary
     } catch (cause) {

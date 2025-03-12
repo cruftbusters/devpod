@@ -50,22 +50,7 @@ export class Journal {
     )
   }
 
-  summary() {
-    return this.transfers.reduce((accounts, transfer) => {
-      const amount = Amount.parse(transfer.amount)
-      const credit = accounts.get(transfer.credit)
-      const debit = accounts.get(transfer.debit)
-      return accounts
-        .set(
-          transfer.credit,
-          credit ? credit.plus(amount.negate()) : amount.negate(),
-        )
-        .set(transfer.debit, debit ? debit.plus(amount) : amount)
-    }, new Map<string, Amount>())
-  }
-
-  periods(toPeriod: (date?: string) => string | undefined) {
-    const accounts: Set<string> = new Set()
+  summary(toPeriod: (date: string) => string) {
     const balance: Map<string, Amount> = new Map()
 
     function accrue(account: string, amount: Amount) {
@@ -83,16 +68,20 @@ export class Journal {
       }
     }
 
-    let lastPeriod = ''
     const periods = []
     const snapshots: Map<string, Amount>[] = []
 
+    let lastPeriod = ''
+
     for (const transfer of this.transfers) {
-      const period: string = toPeriod(transfer.date) || lastPeriod
-      if (lastPeriod !== period) {
-        periods.push(lastPeriod)
-        snapshots.push(new Map(balance))
-        lastPeriod = period
+      if (transfer.date !== '') {
+        const period = toPeriod(transfer.date)
+
+        if (lastPeriod !== period) {
+          periods.push(lastPeriod)
+          snapshots.push(new Map(balance))
+          lastPeriod = period
+        }
       }
 
       const amount = Amount.parse(transfer.amount)
@@ -103,6 +92,8 @@ export class Journal {
 
     periods.push(lastPeriod)
     snapshots.push(balance)
+
+    const accounts: Set<string> = new Set()
 
     for (const snapshot of snapshots) {
       for (const account of snapshot.keys()) {
