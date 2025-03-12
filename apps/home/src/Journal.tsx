@@ -51,47 +51,32 @@ export class Journal {
   }
 
   summary(toPeriod: (date: string) => string) {
-    const balance: Map<string, Amount> = new Map()
-
-    function accrue(account: string, amount: Amount) {
-      const items = []
-      for (const item of account.split(':')) {
-        items.push(item)
-        const account = items.join(':')
-        const entry = balance.get(account)
-        const update = entry ? entry.plus(amount) : amount
-        if (update.mantissa === 0) {
-          balance.delete(account)
-        } else {
-          balance.set(account, update)
-        }
-      }
-    }
-
     const periods = []
     const snapshots: Map<string, Amount>[] = []
 
+    const balance = new Balance()
     let lastPeriod = ''
 
     for (const transfer of this.transfers) {
       if (transfer.date !== '') {
         const period = toPeriod(transfer.date)
 
-        if (lastPeriod !== period) {
+        if (lastPeriod !== '' && lastPeriod !== period) {
           periods.push(lastPeriod)
-          snapshots.push(new Map(balance))
-          lastPeriod = period
+          snapshots.push(new Map(balance.map))
         }
+
+        lastPeriod = period
       }
 
       const amount = Amount.parse(transfer.amount)
 
-      accrue(transfer.credit, amount.negate())
-      accrue(transfer.debit, amount)
+      balance.accrue(transfer.credit, amount.negate())
+      balance.accrue(transfer.debit, amount)
     }
 
     periods.push(lastPeriod)
-    snapshots.push(balance)
+    snapshots.push(balance.map)
 
     const accounts: Set<string> = new Set()
 
@@ -109,6 +94,25 @@ export class Journal {
           snapshots: snapshots.map((balance) => balance.get(name)),
         })),
       periods,
+    }
+  }
+}
+
+class Balance {
+  constructor(public map: Map<string, Amount> = new Map()) {}
+
+  accrue(account: string, amount: Amount) {
+    const items = []
+    for (const item of account.split(':')) {
+      items.push(item)
+      const account = items.join(':')
+      const entry = this.map.get(account)
+      const update = entry ? entry.plus(amount) : amount
+      if (update.mantissa === 0) {
+        this.map.delete(account)
+      } else {
+        this.map.set(account, update)
+      }
     }
   }
 }
