@@ -59,8 +59,12 @@ button:focus-visible {
   background-color: rgb(43, 42, 51);
 }
 
-.grid.alternating .grid-row:nth-child(even) {
-  background-color: rgb(43, 42, 51);
+.alternating > :nth-child(even) {
+  background-color: #333333;
+}
+
+.alternating > :nth-child(odd) {
+  background-color: #242424;
 }
 
 @media (prefers-color-scheme: light) {
@@ -77,8 +81,11 @@ button:focus-visible {
   .grid-cell {
     background-color: #f9f9f9;
   }
-  .grid.alternating .grid-row:nth-child(even) {
-    background-color: #ddd;
+  .alternating > :nth-child(even) {
+    background-color: #d8d8d8;
+  }
+  .alternating > :nth-child(odd) {
+    background-color: #ffffff;
   }
 }
 
@@ -86,4 +93,3 @@ button:focus-visible {
   border: none;
   outline: none;
 }
-
