@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 
 import { MarginAround } from './MarginAround'
@@ -247,9 +247,9 @@ function JournalImportExport({ journal }: { journal: Journal }) {
             onClick={() =>
               setText((text) => {
                 const lines = text.split('\n')
-                return [lines[0]].concat(
-                  lines.filter((_, index) => index > 0).reverse(),
-                ).join('\n')
+                return [lines[0]]
+                  .concat(lines.filter((_, index) => index > 0).reverse())
+                  .join('\n')
               })
             }
           >
@@ -284,7 +284,10 @@ function JournalSummary({ journal }: { journal: Journal }) {
         className="grid alternating"
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${1 + summary.periods.length}, auto)`,
+          gridTemplateColumns: `repeat(${1 + 2 * summary.periods.length}, auto)`,
+          textWrap: 'nowrap',
+          overflowX: 'auto',
+          gridGap: '0 1em',
         }}
       >
         <div
@@ -297,7 +300,10 @@ function JournalSummary({ journal }: { journal: Journal }) {
         >
           <div>account</div>
           {summary.periods.map((period) => (
-            <div key={period}>{period}</div>
+            <Fragment key={period}>
+              <div>{period}</div>
+              <div />
+            </Fragment>
           ))}
         </div>
         {summary.accounts.map(({ path, snapshots }) => (
@@ -314,9 +320,20 @@ function JournalSummary({ journal }: { journal: Journal }) {
             <div style={{ textIndent: `calc(${path.length - 1} * 1em)` }}>
               {path[path.length - 1]}
             </div>
-            {summary.periods.map((period, index) => (
-              <div key={period}>{snapshots[index]?.format()}</div>
-            ))}
+            {summary.periods.map((period, index) => {
+              const amount = snapshots[index]
+              const nextAmount = snapshots[index + 1]
+              return (
+                <Fragment key={period}>
+                  <div>{amount?.format()}</div>
+                  <div>
+                    {amount &&
+                      nextAmount &&
+                      nextAmount.plus(amount.negate()).format()}
+                  </div>
+                </Fragment>
+              )
+            })}
           </div>
         ))}
       </div>
