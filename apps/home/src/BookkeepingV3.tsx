@@ -4,7 +4,8 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { MarginAround } from './MarginAround'
 import { useStatus } from './bookkeeping_v2/useStatus'
 import { Listicle } from './Listicle'
-import { database, Journal } from './Journal'
+import { database, LiveJournal } from './LiveJournal'
+import { Journal } from './Journal'
 import { TransferArraySheet } from './Transfer'
 import { SheetSerde } from './SheetSerde'
 
@@ -90,7 +91,7 @@ function JournalList({
 function JournalView({ journalKey }: { journalKey?: string }) {
   const status = useStatus()
 
-  const journal = useLiveQuery(async () => {
+  const liveJournal = useLiveQuery(async () => {
     if (journalKey !== undefined) {
       try {
         status.info('loading journal')
@@ -99,7 +100,7 @@ function JournalView({ journalKey }: { journalKey?: string }) {
           status.info('ready to load journal')
         } else {
           status.info('loaded journal')
-          return new Journal(journalKey, result.transfers || [])
+          return new LiveJournal(journalKey, result.transfers || [])
         }
       } catch (cause) {
         status.error('failed to load journal', cause)
@@ -110,18 +111,18 @@ function JournalView({ journalKey }: { journalKey?: string }) {
   return (
     <>
       <p>{status.message}</p>
-      {journal !== undefined && (
+      {liveJournal !== undefined && (
         <>
-          <JournalEditor journal={journal} />
-          <JournalImportExport journal={journal} />
-          <JournalSummary journal={journal} />
+          <JournalEditor liveJournal={liveJournal} />
+          <JournalImportExport liveJournal={liveJournal} />
+          <JournalSummary journal={new Journal(liveJournal.transfers)} />
         </>
       )}
     </>
   )
 }
 
-function JournalEditor({ journal }: { journal: Journal }) {
+function JournalEditor({ liveJournal }: { liveJournal: LiveJournal }) {
   return (
     <>
       <div
@@ -148,7 +149,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
           <span>debit</span>
           <span>amount</span>
         </div>
-        {journal.transfers.map((transfer, index) => (
+        {liveJournal.transfers.map((transfer, index) => (
           <div
             aria-label={index.toString()}
             key={index}
@@ -173,7 +174,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
                 className="grid-cell"
                 key={field}
                 onChange={(e) =>
-                  journal.updateTransfer(index, (transfer) => ({
+                  liveJournal.updateTransfer(index, (transfer) => ({
                     ...transfer,
                     [field]: e.target.value,
                   }))
@@ -184,7 +185,7 @@ function JournalEditor({ journal }: { journal: Journal }) {
             <button
               aria-label={'delete'}
               className="grid-cell"
-              onClick={() => journal.deleteTransfer(index)}
+              onClick={() => liveJournal.deleteTransfer(index)}
               style={{ borderRadius: 0 }}
             >
               &times;
@@ -193,13 +194,13 @@ function JournalEditor({ journal }: { journal: Journal }) {
         ))}
       </div>
       <p>
-        <button onClick={() => journal.addTransfer()}>add transfer</button>
+        <button onClick={() => liveJournal.addTransfer()}>add transfer</button>
       </p>
     </>
   )
 }
 
-function JournalImportExport({ journal }: { journal: Journal }) {
+function JournalImportExport({ liveJournal }: { liveJournal: LiveJournal }) {
   const status = useStatus()
   const [text, setText] = useState('')
 
@@ -218,7 +219,7 @@ function JournalImportExport({ journal }: { journal: Journal }) {
           <button
             onClick={() => {
               try {
-                const sheet = TransferArraySheet.toSheet(journal.transfers)
+                const sheet = TransferArraySheet.toSheet(liveJournal.transfers)
                 const text = SheetSerde.serialize(sheet)
                 setText(text)
                 status.clear()
@@ -234,7 +235,7 @@ function JournalImportExport({ journal }: { journal: Journal }) {
               try {
                 const sheet = SheetSerde.deserialize(text)
                 const transfers = TransferArraySheet.toArray(sheet)
-                journal.setTransfers(transfers)
+                liveJournal.setTransfers(transfers)
                 status.clear()
               } catch (cause) {
                 status.error('failed to deserialize transfers', cause)
@@ -285,9 +286,9 @@ function JournalSummary({ journal }: { journal: Journal }) {
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${1 + 2 * summary.periods.length}, auto)`,
+          gridGap: '0 1em',
           textWrap: 'nowrap',
           overflowX: 'auto',
-          gridGap: '0 1em',
         }}
       >
         <div
