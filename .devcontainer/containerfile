@@ -18,6 +18,9 @@ RUN tar -C /opt -xzf nvim-linux-x86_64.tar.gz && \
 RUN echo EDITOR=nvim >> /root/.zshrc
 
 RUN git clone https://github.com/LazyVim/starter /root/.config/nvim
+
+RUN echo 'vim.o.shell = "zsh"' >> /root/.config/nvim/lua/config/options.lua
+
 RUN nvim --headless "+Lazy! sync" +qa
 
 COPY .devcontainer/entrypoint /root/entrypoint
