@@ -38,7 +38,7 @@ export function JournalSummary({ journal }: { journal: Journal }) {
               key={path.join(':')}
               style={{ textIndent: `calc(${path.length - 1} * 1em)` }}
             >
-              {path[path.length - 1]}
+              {path[path.length - 1] || '(blank)'}
             </div>
           ))}
         </div>
@@ -79,7 +79,7 @@ export function JournalSummary({ journal }: { journal: Journal }) {
               }}
             >
               <div style={{ textIndent: `calc(${path.length - 1} * 1em)` }}>
-                {path[path.length - 1]}
+                {path[path.length - 1] || '(blank)'}
               </div>
               {summary.periods.map((period, index) => {
                 const amount = snapshots[index]
