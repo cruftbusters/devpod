@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 
 import { MarginAround } from './MarginAround'
-import { useStatus } from './bookkeeping_v2/useStatus'
+import { useStatus } from './useStatus'
 import { Listicle } from './Listicle'
 import { database, LiveJournal } from './LiveJournal'
 import { Journal } from './Journal'

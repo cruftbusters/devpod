@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { TextSheet } from './TextSheet'
 import { Transfer } from './types'
-import { useStatus } from './useStatus'
+import { useStatus } from '../useStatus'
 import { AccountBalances, summarize } from './Balance'
 
 export function useLedger() {

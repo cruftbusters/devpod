@@ -6,7 +6,7 @@ import { useLedger } from './useLedger'
 import { Amount2, Transfer } from './types'
 import { useState } from 'react'
 import { parseAmount } from './parseAmount'
-import { useStatus } from './useStatus'
+import { useStatus } from '../useStatus'
 
 export function BookkeepingV2() {
   const ledger = useLedger()
