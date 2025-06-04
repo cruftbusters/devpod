@@ -14,7 +14,7 @@ git config init.defaultBranch main
 git config pull.rebase true
 git config push.autoSetupRemote true
 
-pnpm -r install
+COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm -r install
 
 screen -d -m -S home-dev pnpm -F home dev
 screen -d -m -S home-test pnpm -F home exec vitest --ui --api 5174
