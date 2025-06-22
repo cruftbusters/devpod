@@ -9,13 +9,18 @@ if [ "$SSH_AUTH_SOCK" = "" ]; then
   ssh-add
 fi
 
-podman run \
-  --interactive \
-  --tty \
-  --rm \
-  --env SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
-  --publish 8080:8080 \
-  --volume $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) \
-  --volume $HOME/.gitconfig:/root/.gitconfig.host:ro \
-  --volume $HOME/.ssh/known_hosts:/root/.ssh/known_hosts \
-  $tag
+if [ -f cidfile ] ; then
+  podman start $(cat cidfile)
+else
+
+  podman run \
+    --cidfile cidfile \
+    --detach \
+    --env SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
+    --publish 8080:8080 \
+    --volume $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) \
+    --volume $HOME/.gitconfig:/root/.gitconfig.host:ro \
+    --volume $HOME/.ssh/known_hosts:/root/.ssh/known_hosts \
+    $tag
+
+fi

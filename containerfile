@@ -40,4 +40,4 @@ RUN nvim --headless "+Lazy! sync" +qa
 
 COPY entrypoint /bin/entrypoint
 
-CMD entrypoint
+CMD exec entrypoint
