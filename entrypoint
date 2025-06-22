@@ -21,11 +21,11 @@ ln -sf $workspace/devpod/index.html /usr/share/nginx/html/index.html
 
 nginx
 
-# cruftbusters.com
+# dotcom
 
-git clone git@github.com:cruftbusters/cruftbusters.com.git
+git clone git@github.com:cruftbusters/dotcom
 
-cd $workspace/cruftbusters.com
+cd $workspace/dotcom
 
 COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm -r install
 
