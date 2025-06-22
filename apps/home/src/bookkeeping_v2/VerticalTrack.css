@@ -1,7 +1,0 @@
-@media (min-width: 64em) {
-  .vertical-tracks {
-    display: grid;
-    grid-auto-columns: 50vw;
-    grid-auto-flow: column;
-  }
-}

@@ -38,6 +38,6 @@ RUN nvim --headless "+Lazy! sync" +qa
 
 # entrypoint
 
-COPY .devcontainer/entrypoint /root/entrypoint
+COPY entrypoint /bin/entrypoint
 
-CMD /root/entrypoint
+CMD entrypoint

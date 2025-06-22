@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
-tag=cruftbusters.com/devcontainer
+tag=cruftbusters/devpod
 
-podman build -f .devcontainer/containerfile -t $tag .
+podman build -f containerfile -t $tag .
 
 if [ "$SSH_AUTH_SOCK" = "" ]; then
   eval $(ssh-agent)

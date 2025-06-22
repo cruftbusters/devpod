@@ -15,9 +15,9 @@ cd $workspace
 
 git clone git@github.com:cruftbusters/devpod.git
 
-ln -sf $workspace/devpod/.devcontainer/nginx.conf /etc/nginx/nginx.conf
+ln -sf $workspace/devpod/nginx.conf /etc/nginx/nginx.conf
 
-ln -sf $workspace/devpod/.devcontainer/index.html /usr/share/nginx/html/index.html
+ln -sf $workspace/devpod/index.html /usr/share/nginx/html/index.html
 
 nginx
 
