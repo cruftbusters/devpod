@@ -1,18 +1,31 @@
 #!/usr/bin/env zsh
 
-workspace=/root/workspace
-ln -sf $workspace/.devcontainer/nginx.conf /etc/nginx/nginx.conf
-ln -sf $workspace/.devcontainer/index.html /usr/share/nginx/html/index.html
+git config --global core.editor nvim
+git config --global init.defaultBranch main
+git config --global pull.rebase true
+git config --global push.autoSetupRemote true
 
-chmod a+x /root
+workspace=/workspace
 
-git clone git@github.com:cruftbusters/cruftbusters.com.git $workspace
+mkdir $workspace
+
 cd $workspace
 
-git config core.editor nvim
-git config init.defaultBranch main
-git config pull.rebase true
-git config push.autoSetupRemote true
+# devpod
+
+git clone git@github.com:cruftbusters/devpod.git
+
+ln -sf $workspace/devpod/.devcontainer/nginx.conf /etc/nginx/nginx.conf
+
+ln -sf $workspace/devpod/.devcontainer/index.html /usr/share/nginx/html/index.html
+
+nginx
+
+# cruftbusters.com
+
+git clone git@github.com:cruftbusters/cruftbusters.com.git
+
+cd $workspace/cruftbusters.com
 
 COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm -r install
 
@@ -20,6 +33,6 @@ screen -d -m -S home-dev pnpm -F home dev
 screen -d -m -S home-test pnpm -F home exec vitest --ui --api 5174
 screen -d -m -S home-e2e pnpm -F home exec playwright test --ui --ui-port 5175
 
-nginx
+cd -
 
 /bin/zsh
