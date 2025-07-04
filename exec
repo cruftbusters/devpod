@@ -1,0 +1,8 @@
+#!/bin/zsh
+
+
+if [ ! -f cidfile ] ; then
+  ./start
+fi
+
+podman exec -it $(cat cidfile) $@

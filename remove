@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+
+podman rm --force $(cat cidfile)

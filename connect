@@ -1,3 +1,0 @@
-#!/bin/zsh
-
-podman exec -it $(cat cidfile) zsh

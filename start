@@ -20,7 +20,6 @@ else
     --publish 8080:8080 \
     --volume $(dirname $SSH_AUTH_SOCK):$(dirname $SSH_AUTH_SOCK) \
     --volume $HOME/.gitconfig:/root/.gitconfig.host:ro \
-    --volume $HOME/.ssh/known_hosts:/root/.ssh/known_hosts \
     $tag
 
 fi
