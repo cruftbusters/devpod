@@ -37,6 +37,8 @@ RUN git clone https://github.com/LazyVim/starter .config/nvim
 
 RUN echo 'vim.o.shell = "zsh"' >> .config/nvim/lua/config/options.lua
 
+COPY lazyvim.json .config/nvim/
+
 RUN nvim --headless "+Lazy! sync" +qa
 
 #

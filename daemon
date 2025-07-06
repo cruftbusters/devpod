@@ -8,6 +8,8 @@ git config --global push.autoSetupRemote true
 
 git clone git@github.com:cruftbusters/devpod.git
 
+ln -sf $HOME/devpod/lazyvim.json .config/nvim/
+
 git clone git@github.com:cruftbusters/dotcom.git
 
 exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"
