@@ -4,11 +4,13 @@ RUN apt-get update
 
 RUN apt-get upgrade -y
 
-RUN apt-get install -y build-essential less ripgrep unzip zsh
+RUN apt-get install -y build-essential less nginx ripgrep screen unzip zsh
 
 RUN apt-get clean
 
 RUN npm install --global corepack
+
+RUN COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm --version
 
 # neovim
 
@@ -44,6 +46,10 @@ RUN nvim --headless "+Lazy! sync" +qa
 #
 
 COPY known_hosts .ssh/
+
+COPY nginx.conf /etc/nginx/nginx.conf
+
+COPY index.html /usr/share/nginx/html/index.html
 
 COPY daemon .local/bin/
 

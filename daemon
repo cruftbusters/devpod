@@ -10,6 +10,18 @@ git clone git@github.com:cruftbusters/devpod.git
 
 ln -sf $HOME/devpod/lazyvim.json .config/nvim/
 
+nginx
+
 git clone git@github.com:cruftbusters/dotcom.git
+
+cd dotcom
+
+pnpm -r install
+
+screen -d -m -S dotcom.dev pnpm dev
+
+screen -d -m -S dotcom.test pnpm vitest --ui --api 5174
+
+screen -d -m -S dotcom.e2e pnpm playwright test --ui --ui-port 5175
 
 exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"
