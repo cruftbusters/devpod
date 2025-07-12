@@ -1,0 +1,19 @@
+#!/usr/bin/env zsh
+
+set -e
+
+git config --global include.path .gitconfig.host
+git config --global core.editor nvim
+git config --global init.defaultBranch main
+git config --global pull.rebase true
+git config --global push.autoSetupRemote true
+
+ln -sf $HOME/devpod/omz.zsh .oh-my-zsh/custom/
+
+ln -sf $HOME/devpod/lazyvim.json .config/nvim/
+
+cp devpod/nginx.conf /etc/nginx/nginx.conf
+
+cp devpod/index.html /usr/share/nginx/html/index.html
+
+nginx

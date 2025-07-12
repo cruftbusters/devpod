@@ -1,29 +1,20 @@
 #!/usr/bin/env zsh
 
-git config --global include.path .gitconfig.host
-git config --global core.editor nvim
-git config --global init.defaultBranch main
-git config --global pull.rebase true
-git config --global push.autoSetupRemote true
+set -e
 
-git clone git@github.com:cruftbusters/backstage.git
+clone() {
+  if [ ! -d $2 ] ; then
+    git clone git@github.com:$1/$2
+  fi
+}
 
-git clone git@github.com:cruftbusters/devpod.git
 
-ln -sf $HOME/devpod/lazyvim.json .config/nvim/
+clone cruftbusters backstage
 
-nginx
+clone cruftbusters devpod
 
-git clone git@github.com:cruftbusters/dotcom.git
+clone cruftbusters dotcom
 
-cd dotcom
-
-pnpm -r install
-
-screen -d -m -S dotcom.dev pnpm dev
-
-screen -d -m -S dotcom.test pnpm vitest --ui --api 5174
-
-screen -d -m -S dotcom.e2e pnpm playwright test --ui --ui-port 5175
+find . -name .devcontainer.onStartCommand -exec bash -c "echo === running {} ; time eval {}" \;
 
 exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"

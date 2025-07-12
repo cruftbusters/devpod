@@ -1,16 +1,13 @@
 FROM mcr.microsoft.com/playwright:v1.53.2-noble
 
-RUN apt-get update
-
-RUN apt-get upgrade -y
-
-RUN apt-get install -y build-essential gh less nginx ripgrep screen unzip zsh
-
-RUN apt-get clean
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y build-essential gh less nginx ripgrep screen unzip zsh && \
+    apt-get clean
 
 RUN npm install --global corepack
 
-RUN COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm --version
+RUN corepack prepare pnpm@10.4.1 yarn@4.4.1 --activate
 
 # neovim
 
@@ -29,10 +26,6 @@ WORKDIR /root
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-RUN sed -i 's/robbyrussell/aussiegeek/' .zshrc
-
-RUN echo EDITOR=nvim >> .zshrc
-
 # lazyvim
 
 RUN git clone https://github.com/LazyVim/starter .config/nvim
@@ -45,12 +38,10 @@ RUN nvim --headless "+Lazy! sync" +qa
 
 #
 
+COPY daemon .local/bin/
+
 COPY known_hosts .ssh/
 
-COPY nginx.conf /etc/nginx/nginx.conf
-
-COPY index.html /usr/share/nginx/html/index.html
-
-COPY daemon .local/bin/
+COPY omz.zsh .oh-my-zsh/custom/
 
 CMD exec .local/bin/daemon
