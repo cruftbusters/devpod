@@ -4,7 +4,7 @@ RUN apt-get update
 
 RUN apt-get upgrade -y
 
-RUN apt-get install -y build-essential less nginx ripgrep screen unzip zsh
+RUN apt-get install -y build-essential gh less nginx ripgrep screen unzip zsh
 
 RUN apt-get clean
 
