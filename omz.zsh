@@ -9,5 +9,5 @@ export dgst() {
     ! -path '*/.local/*' \
     ! -path '*/.config/nvim/*' \
     ! -path '*/.oh-my-zsh/*' \
-    -exec bash -c "cd {}/.. > /dev/null ; echo {} ; git status ; cd -" \;
+    -exec bash -c "cd {}/.. > /dev/null ; echo {} ; git status ; cd - > /dev/null" \;
 }
