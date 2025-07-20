@@ -38,6 +38,8 @@ RUN nvim --headless "+Lazy! sync" +qa
 
 #
 
+RUN bash -c 'mkdir -p /mnt/c/Windows/System32/WindowsPowerShell/v1.0 && touch $_/powershell.exe && chmod +x $_'
+
 COPY daemon .local/bin/
 
 COPY known_hosts .ssh/
